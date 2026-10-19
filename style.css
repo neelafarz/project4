@@ -55,15 +55,9 @@ button { font: inherit; color: inherit; }
 @keyframes flicker { 0%, 100% { opacity: .35; } 8% { opacity: .15; } 12% { opacity: .4; } 40% { opacity: .3; } 44% { opacity: .1; } 48% { opacity: .38; } 75% { opacity: .25; } }
 .house-flare .house-glow, .house-glow.house-flare { animation: none; opacity: 1; transition: opacity .4s; }
 
-/* bats */
-.bat { position: absolute; width: calc(var(--u) * 9); height: calc(var(--u) * 5); }
-.bat svg { width: 100%; height: 100%; fill: #05030c; }
-.bat.ambient { top: var(--y); left: -12%; animation: batFly var(--t) linear infinite; animation-delay: var(--d); }
-@keyframes batFly { 0% { transform: translate(0, 0); } 25% { transform: translate(calc(var(--u) * 35), calc(var(--u) * -6)); }
-  50% { transform: translate(calc(var(--u) * 70), calc(var(--u) * 4)); } 75% { transform: translate(calc(var(--u) * 105), calc(var(--u) * -5)); }
-  100% { transform: translate(calc(var(--u) * 125), 0); } }
-.bat.burst { left: 50%; top: 45%; animation: batBurst 2.4s ease-out forwards; }
-@keyframes batBurst { to { transform: translate(var(--dx), var(--dy)) scale(1.6); opacity: 0; } }
+/* embers (story only) */
+.ember { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #ffd27a; box-shadow: 0 0 8px 3px #ff9a30; animation: ember 2.6s ease-out forwards; }
+@keyframes ember { to { transform: translate(var(--dx), calc(var(--u) * -30)); opacity: 0; } }
 
 /* leaves */
 .leaf { position: absolute; top: -6%; left: var(--x); width: calc(var(--u) * 3.2); height: calc(var(--u) * 3.2);
@@ -127,7 +121,7 @@ button { font: inherit; color: inherit; }
 /* reduced motion: no drifting, falling, flying, shaking or flashing — glow and fades only */
 [data-motion="reduced"] .fog, [data-motion="reduced"] .house-glow,
 [data-motion="reduced"] .pumpkin.pop, [data-motion="reduced"] .pumpkin.wrong { animation: none; }
-[data-motion="reduced"] #ambientBats, [data-motion="reduced"] #leaves, [data-motion="reduced"] .bat.burst,
+[data-motion="reduced"] #leaves, [data-motion="reduced"] .ember,
 [data-motion="reduced"] .wisp { display: none; }
 [data-motion="reduced"] .smoke { animation: smokeFade 1.8s ease-out forwards; }
 @keyframes smokeFade { from { opacity: 1; } to { opacity: 0; } }

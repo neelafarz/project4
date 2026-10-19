@@ -27,13 +27,13 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
 
 ### Phase 1 contract (provisional until Developer approves)
 - **Scene:** `assets/img/scene.png` full-bleed, unaltered; stage keeps its 853×1844 aspect, letterboxed on other phones. Features: haunted house (focal), graveyard, pumpkin patch.
-- **Ambient effects:** drifting fog, flying bats, falling leaves, flickering house glow. Sound: CC0 dungeon bed + wind layer (see `research.md`).
+- **Ambient effects:** drifting fog, falling leaves, flickering house glow (bats removed after Developer feedback: they did not fit the scene). Sound: CC0 dungeon bed + wind layer (see `research.md`).
 - **Start screen:** Reduce-motion checkbox (preset from device setting) + Enter, which unlocks audio and applies the motion choice.
 - **Play/Pause:** one 48px button (or `P`) freezes audio, CSS animation, shared timers and scene interaction; also auto-pauses when the tab is hidden.
-- **Story 1:** tap pumpkins small (far right) → medium (centre) → large (lower left). Each tap: unique note, ring, progress dot. Wrong order: buzz, shake, reset. Third tap starts ~7.5 s story (wake, house flare + bat burst, peak + cackle, fizzle + smoke, rest). Other taps are locked during the story; replayable.
-- **Hints:** after 12 s / 30 s / 55 s idle, increasingly specific; reset on any interaction.
+- **Story 1:** tap pumpkins small (far right) → medium (centre) → large (lower left). Each tap: unique note, ring, progress dot. Wrong order: buzz, shake, reset. Third tap starts ~7.5 s story (wake, house flare + rising embers, peak + cackle, fizzle + smoke, rest). Other taps are locked during the story; replayable.
+- **Hints:** after 5 s / 20 s / 40 s idle, increasingly specific; start-screen text now states the goal (explore; something in the patch wants waking); reset on any interaction.
 - **Decoys:** door and two gravestones give sound + visual feedback only.
-- **Reduced motion:** no bats, leaves, drift, shake or flash; glow and fades only.
+- **Reduced motion:** no leaves, embers, drift, shake or flash; glow and fades only.
 - **Acceptance (automated, headless Chromium 390×780):** order logic, reset, replay, pause freezes story, hints, `P` key, tap targets ≥44px, reduced-motion attribute, zero console errors. **Not yet verified:** physical phone (see `plan.md`).
 
 

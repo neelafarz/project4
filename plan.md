@@ -32,15 +32,19 @@ Test each result before continuing, including related behavior that already work
 
 **Main risk:** audio on iOS Safari (autoplay unlock, MP3 loop gap) and overlay alignment of hotspots on real screens.
 
+### Revision 1 (Developer's first look at the live build)
+- Observed (Developer): "idk what I\'m supposed to be doing"; bats "don\'t seem to fit the scene".
+- Changes: start screen states the goal; hints start at 5 s and escalate; all bats removed, story burst replaced by rising embers. Verify: headless test + Developer re-check.
+
 ### Developer must verify on a physical phone
 1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
 2. Tap targets: small pumpkin at far right edge is comfortable to hit; door and gravestones respond.
 3. Glow overlay lines up with the pumpkins and house door.
 4. Pause freezes sound, motion, and blocks taps; Play resumes. Lock the screen / switch apps: it should auto-pause.
 5. Full story plays ~7.5 s, taps are ignored during it, and it replays.
-6. Reduce motion checkbox (and the phone's Reduce Motion setting) removes bats/leaves/flash.
+6. Reduce motion checkbox (and the phone's Reduce Motion setting) removes leaves/embers/flash.
 7. Layout fits without scrolling in portrait; text is readable; no performance stutter.
-8. Hints appear after idle time.
+8. Hints appear after idle time (5 s / 20 s / 40 s).
 
 
 ## Evidence and revisions

@@ -77,7 +77,7 @@
     wisp() { audio.tone(880, 0.9, 'sine', 0.12, 0, 1320); audio.tone(1320, 0.9, 'sine', 0.06, 0.1, 1760); },
     storyRise() { audio.tone(70, 1.6, 'sawtooth', 0.14, 0, 300); audio.noise(1.4, 0.1, 300, 2500); },
     storyChord() { [262, 330, 392, 523].forEach((f) => audio.tone(f, 1.6, 'triangle', 0.18)); },
-    bats() { audio.noise(1.2, 0.18, 800, 3500); },
+    embers() { audio.noise(1.2, 0.18, 800, 3500); },
     cackle() { [330, 280, 330, 260, 300].forEach((f, i) => audio.tone(f, 0.14, 'square', 0.1, i * 0.17, f * 0.8)); },
     fizzle() { audio.noise(1.6, 0.22, 5000, 400, 0, 'highpass'); audio.tone(900, 1.4, 'sine', 0.06, 0, 120); },
     end() { audio.tone(196, 1.2, 'sine', 0.2); audio.tone(147, 1.4, 'sine', 0.2, 0.25); },
@@ -85,9 +85,9 @@
 
   /* ---------- progressive hints: shown by idle time since the Developer last made progress ---------- */
   const HINT_STEPS = [
-    [12000, 'The pumpkins seem to be watching you…'],
-    [30000, 'They won’t all stir at once. Size matters.'],
-    [55000, 'Start with the smallest and work up to the grandest.'],
+    [5000, 'Tap things to explore. Something in the pumpkin patch is restless…'],
+    [20000, 'The pumpkins wake one at a time. Size matters.'],
+    [40000, 'Wake the smallest first, then work up to the largest.'],
   ];
   const hints = {
     lastActive: 0, shown: -1,
@@ -100,17 +100,14 @@
     },
   };
 
-  /* ---------- scene setup: pumpkin art, ambient bats, leaves ---------- */
+  /* ---------- scene setup: pumpkin art, leaves ---------- */
   // Carved-face glow drawn over the supplied scene's unlit pumpkins when they are awakened.
   const pumpkinSVG = `<svg viewBox="0 0 100 90" aria-hidden="true"><g class="face" fill="#fff1a0">
     <polygon points="24,34 40,34 32,50"/><polygon points="60,34 76,34 68,50"/>
     <path d="M26 60 L36 68 L44 62 L50 70 L56 62 L64 68 L74 60 L68 80 L32 80Z"/></g></svg>`;
-  const batSVG = '<svg viewBox="0 0 40 22"><path d="M20 20 L16 9 L11 12 L0 2 Q8 12 6 18 Q12 14 16 20 Q18 17 20 20 Q22 17 24 20 Q28 14 34 18 Q32 12 40 2 L29 12 L24 9Z"/></svg>';
 
   function buildScene() {
     pumpkins.forEach((p) => { p.innerHTML = pumpkinSVG; });
-    $('ambientBats').innerHTML = [[14, 17, 0], [26, 23, -9]].map(([y, t, d]) =>
-      `<div class="bat ambient" style="--y:${y}%;--t:${t}s;--d:${d}s">${batSVG}</div>`).join('');
     const colors = ['#d9731a', '#b3501a', '#e0a030', '#8a3a14'];
     $('leaves').innerHTML = Array.from({ length: 9 }, (_, i) =>
       `<span class="leaf" style="--x:${(i * 11 + 4) % 96}%;--t:${11 + (i % 4) * 2}s;--d:${-i * 1.7}s;--c:${colors[i % 4]}"></span>`).join('');
@@ -126,6 +123,14 @@
   function setPips(n) {
     [...$('pips').children].forEach((el, i) => el.classList.toggle('on', i < n));
     $('pips').setAttribute('aria-label', `Story progress ${n} of 3`);
+  }
+  function embersAt(el) { // glowing sparks drifting up from an awakened pumpkin
+    const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect();
+    for (let k = 0; k < 6; k++) {
+      const d = document.createElement('div'); d.className = 'ember';
+      d.style.cssText = `left:${r.left - s.left + r.width * (0.2 + 0.12 * k)}px;top:${r.top - s.top + r.height * 0.3}px;--dx:${(k % 2 ? 1 : -1) * (6 + k * 3)}px;animation-delay:${k * 0.2}s`;
+      $('burst').appendChild(d); clock.after(3200, () => d.remove());
+    }
   }
   function smokeAt(el) {
     const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect();
@@ -160,20 +165,16 @@
       story.progress = 0; setPips(0);
       pumpkins.forEach((p) => { p.classList.remove('lit'); p.style.removeProperty('--glow'); });
     },
-    play() { // ~7.5 s: wake → flare + bats → peak + cackle → fizzle + smoke → rest
+    play() { // ~7.5 s: wake → flare + embers → peak + cackle → fizzle + smoke → rest
       story.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show');
       document.activeElement && document.activeElement.blur();
       const at = (ms, fn) => clock.after(ms, fn), rm = reduced();
       pumpkins.forEach((p, i) => at(i * 400, () => p.style.setProperty('--glow', 1.2)));
       sfx.storyRise();
       at(1500, () => {
-        stage.classList.add('house-flare'); sfx.storyChord(); sfx.bats();
+        stage.classList.add('house-flare'); sfx.storyChord(); sfx.embers();
         pumpkins.forEach((p) => p.style.setProperty('--glow', 2.2));
-        if (!rm) {
-          $('burst').insertAdjacentHTML('beforeend', [[-90, -150], [-40, -190], [10, -170], [60, -200], [105, -140]].map(([x, y]) =>
-            `<div class="bat burst" style="--dx:${x * 0.01 * 100 / 3.6}vw;--dy:${y * 0.01 * 100 / 3.6}vw">${batSVG}</div>`).join(''));
-          at(2600, () => $('burst').querySelectorAll('.bat').forEach((b) => b.remove()));
-        }
+        if (!rm) pumpkins.forEach(embersAt);
       });
       at(3400, () => { sfx.cackle(); pumpkins.forEach((p) => p.style.setProperty('--glow', 3.4)); if (!rm) $('flash').classList.add('on'); });
       at(4300, () => $('flash').classList.remove('on'));
