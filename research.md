@@ -27,7 +27,7 @@ Investigate unfamiliar techniques or asset sources as needed. Verify usage terms
 ### Decisions (Phase 1)
 - **Scene:** moonlit haunted hill, graveyard, pumpkin patch. Chosen because the Developer supplied the artwork (`assets/img/scene.png`, used unaltered). My first code-drawn SVG scene was rejected by the Developer on art style.
 - **Story 1, "The Patch Awakens":** tap three unlit pumpkins small → medium → large; ~7.5 s payoff. Alternatives not built (Phase 2 candidates): lantern-lit gate opening, ghost procession along the path.
-- **Audio approach:** two CC0 loops for the ambient bed; interaction/story sound effects are synthesized with Web Audio (original, no licence needed). Chosen because no verified CC0 owl/cackle clip was found quickly (OpenGameArt owl results were CC-BY-SA).
+- **Audio approach:** two CC0 loops for the ambient bed; interaction/story sound effects are synthesized with Web Audio (original, no licence needed). Chosen because no verified CC0 owl/cackle clip was found (OpenGameArt owl results were CC-BY-SA screeches; Utah soundscape archive recordings are CC BY-NC-ND; others paid). The ambient owl hoot is therefore synthesized (soft sine "hoo, hoo-hoo", random 18–35 s gaps). Swap in a CC0 Freesound recording later if the Developer finds one and verifies its page.
 - **Format:** OGG sources converted to MP3 (96 kbps) because OGG support on iOS Safari is uncertain. Conversion is a format change only.
 
 ### Asset sources (verified on the source page, 2026-10-19)

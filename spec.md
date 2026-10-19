@@ -28,6 +28,7 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
 ### Phase 1 contract (provisional until Developer approves)
 - **Scene:** `assets/img/scene.png` full-bleed, unaltered; stage keeps its 853×1844 aspect, letterboxed on other phones. Features: haunted house (focal), graveyard, pumpkin patch.
 - **Ambient effects:** drifting fog, falling leaves, flickering house glow (bats removed after Developer feedback: they did not fit the scene). Sound: CC0 dungeon bed + wind layer (see `research.md`).
+- **Owl:** distant synthesized hoot at ~9 s, then every 18–35 s while idle; skipped during the story; frozen by Pause.
 - **Start screen:** Reduce-motion checkbox (preset from device setting) + Enter, which unlocks audio and applies the motion choice.
 - **Play/Pause:** one 48px button (or `P`) freezes audio, CSS animation, shared timers and scene interaction; also auto-pauses when the tab is hidden.
 - **Story 1:** tap pumpkins small (far right) → medium (centre) → large (lower left). Each tap: unique note, ring, progress dot. Wrong order: buzz, shake, reset. Third tap starts ~7.5 s story (wake, house flare + rising embers, peak + cackle, fizzle + smoke, rest). Other taps are locked during the story; replayable.

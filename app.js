@@ -80,8 +80,19 @@
     embers() { audio.noise(1.2, 0.18, 800, 3500); },
     cackle() { [330, 280, 330, 260, 300].forEach((f, i) => audio.tone(f, 0.14, 'square', 0.1, i * 0.17, f * 0.8)); },
     fizzle() { audio.noise(1.6, 0.22, 5000, 400, 0, 'highpass'); audio.tone(900, 1.4, 'sine', 0.06, 0, 120); },
+    // distant owl: soft low sine "hoo ... hoo-hoo" with a slight downward glide
+    owl() { [[0, 420, 0.5], [0.8, 400, 0.3], [1.2, 380, 0.45]].forEach(([d, f, len]) => {
+      audio.tone(f, len, 'sine', 0.1, d, f * 0.82); audio.tone(f * 2, len, 'sine', 0.025, d, f * 1.6); }); },
     end() { audio.tone(196, 1.2, 'sine', 0.2); audio.tone(147, 1.4, 'sine', 0.2, 0.25); },
   };
+
+  /* ---------- occasional owl hoot: random 18–35 s gaps on the shared clock, so Pause delays it too ---------- */
+  function scheduleOwl(first = false) {
+    clock.after(first ? 9000 : 18000 + Math.random() * 17000, () => {
+      if (story.mode === 'idle') sfx.owl();
+      scheduleOwl();
+    });
+  }
 
   /* ---------- progressive hints: shown by idle time since the Developer last made progress ---------- */
   const HINT_STEPS = [
@@ -219,7 +230,7 @@
     buildScene();
     $('start').hidden = true; stage.hidden = false;
     await audio.init();
-    hints.reset();
+    hints.reset(); scheduleOwl(true);
     $('pause').focus({ preventScroll: true });
     requestAnimationFrame((n) => { clock.last = n; clock.tick(n); });
   });
