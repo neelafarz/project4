@@ -6,7 +6,7 @@
   --u: min(1vw, 0.4615dvh);
   --ink: #f4f6ff;
   --accent: #ff5a4a;      /* castle red */
-  --ghost: #ff5a4a;       /* red glow for lit statues and progress dots */
+  --ghost: #5aa8ff;       /* blue progress dots */
   --panel: rgba(8, 10, 32, .85);
   font-size: 16px;
 }
@@ -150,8 +150,6 @@ button { font: inherit; color: inherit; }
 .pips { display: flex; gap: 10px; padding: 12px 14px; border-radius: 24px; background: var(--panel); }
 .pips i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ghost); transition: background .3s, box-shadow .3s; }
 .pips i.on { background: var(--ghost); box-shadow: 0 0 10px var(--ghost); }
-.pips i:last-child { border-color: var(--accent); }
-.pips i:last-child.on { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
 .pause { width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(244, 246, 255, .6); background: var(--panel); cursor: pointer; display: grid; place-items: center; opacity: .85; }
 .pause svg { width: 24px; height: 24px; fill: var(--ink); }
 .pause .ic-play { display: none; }

@@ -62,6 +62,9 @@ Test each result before continuing, including related behavior that already work
 - **Changes:** rain (sound and streaks) and leaves removed; thunder and lightning kept. Statue activation is now glowing red eyes on dormant statues, using a derived dormant gargoyle layer (original untouched); the old silhouette-glow images deleted. Spider redrawn: solid black, eight legs always drawn and swinging in two alternating sets, glowing red eyes, no rim light. Image links now carry version tags so old cached images cannot reappear.
 - **Verified (headless Chromium, screenshots reviewed):** all six statues dormant with no red or green; red eyes appear in the right place on all six when activated; spider has eight legs; story regression passes (order, reset, decoys, payoff, replay, reduced motion); zero console errors. **Not verified:** the Developer's own browser/phone after a hard refresh; whether the eye size reads well on a small screen.
 
+### Revision 7
+- **Observed (Developer):** wanted the progress lights in the top left to be blue. **Change:** all four dots use blue (`#5aa8ff`); the red fourth dot is gone. **Verified:** screenshot of the HUD after the full order and the correct eyes shows four lit blue dots; no console errors.
+
 ### Developer must verify on a physical phone
 1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
 2. Tap targets: all six statues and the four eye pairs are comfortable to hit (the small right-side pairs have a 48 px target); wrong statues grumble.
