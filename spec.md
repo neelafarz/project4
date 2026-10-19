@@ -31,15 +31,17 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
 - **Start screen:** Reduce-motion checkbox (preset from device setting) + Enter, which unlocks audio and applies the motion choice.
 - **Play/Pause:** one 48px button (or `P`) freezes audio, CSS animation, shared timers and scene interaction; also auto-pauses when the tab is hidden.
 - **Story 1, "The Count Awakens" (~8 s payoff):**
-  1. Tap any three of the six gargoyle statues. Each lights up green with a rising stone chime, a ring and a progress dot (3 green dots). Tapping a lit statue just re-chimes; once three are lit, the other three only grumble (decoys).
-  2. After the third, a toast says something stirs and red eyes open in the forest after ~1.4 s. Tapping them growls, lights the 4th (red) dot and starts the payoff.
-  3. Payoff: rumble → lightning + castle door flare (0.9 s) → door creak + Dracula silhouette steps into the lit doorway (1.8 s, gone by 5.6 s) → organ sting + bats burst (2.8 s) → laugh + second flash (4.8 s) → glows fade (6.2 s) → rest and toast (7.2 s). All taps are locked meanwhile; then everything resets and it replays.
-  4. Hints by idle time, per phase: statues phase 5 s / 20 s / 40 s; eyes phase 6 s / 20 s. Reset on any interaction.
+  1. **Statues, in order:** tap the front-left statue (red eyes), then the top-right statue, then the bottom-right statue. Each correct tap lights that statue's own silhouette in a soft green glow (per-statue image traced to its outline, not a circle) with a rising stone chime, a ring and a progress dot (3 green dots). A wrong statue grumbles and, if any were lit, they all go dark again with a toast. Tapping an already-lit statue re-chimes only. Statues are tappable by keyboard in tab order.
+  2. **Eyes:** after the third statue, a toast says something stirs and four pairs of red eyes appear in the forest (staggered). The **largest** pair (far left) is correct; three smaller pairs on the right side are decoys. Each pair fades in and out every ~4–6 s on its own cycle (steady, not cycling, with Reduce motion). Tapping a decoy plays a whisper and the eyes blink shut for 1.5 s with no progress. Tapping the correct pair growls, lights the 4th (red) dot and starts the payoff. Eyes stay tappable even while faded so keyboard/touch users are never locked out.
+  3. **Payoff:** rumble → lightning + castle door flare (0.9 s) → door creak + Dracula silhouette fades up on the road below the castle (1.8 s, gone by 5.6 s) → organ sting + bats burst from the castle (2.8 s) → laugh + second flash (4.8 s) → glows fade (6.2 s) → rest and toast (7.2 s). All taps are locked meanwhile; then everything resets and it replays.
+  4. **Hints by idle time, per phase:** statues 5 s ("stone guardians seem to be watching"), 20 s ("they wake in a certain order, start on the left"), 40 s ("left first, then top right, then bottom right"); eyes 6 s, 20 s ("trust the one that glares the biggest"). Reset on any interaction.
 - **Reduced motion:** no mist/cloud drift, window flicker, bats, flashes, shaking or pulsing; glows and fades only.
 - **Not built yet:** Phase 2 stories 2 and 3. Dracula is one supplied silhouette (`castle_dracula.png`) shown in the door; a window peek is a possible variation.
-- **Acceptance (automated, headless Chromium 390×844):** any-three logic, decoy behavior, eyes appear/hidden states, payoff lock + reset + replay, Pause freezes the payoff, tap targets ≥48px, reduced-motion attribute, zero console errors. **Not yet verified:** physical phone (see `plan.md`).
+- **Acceptance (automated, headless Chromium 390×844):** statue order and reset-on-wrong, eyes appear/hidden states, decoy eyes, payoff lock + reset + replay, Pause freezes the payoff, tap targets ≥48px, reduced-motion attribute, zero console errors. **Not yet verified:** physical phone (see `plan.md`).
 
 ## Scope and revisions
+
+**Revision log:** 2026-10-19 (castle concept, after the Developer's first phone/desktop test): statue trigger changed from "any three" to a fixed order (front-left → top-right → bottom-right); glow changed from a green circle to a silhouette-shaped soft glow; forest eyes made smaller, moved left, supplemented by decoy pairs on the right, and set to fade in and out; Dracula moved down onto the road. Evidence is recorded in `plan.md` (Revision 2).
 
 Record excluded ideas, the next behavior that must work, and consequential requirement changes with their evidence.
 

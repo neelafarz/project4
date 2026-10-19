@@ -4,7 +4,8 @@
   'use strict';
   const $ = (id) => document.getElementById(id);
   const stage = $('stage'), hintEl = $('hint'), toastEl = $('toast');
-  const gargs = [0, 1, 2, 3, 4, 5].map((i) => $('g' + i)), eyes = $('eyes');
+  const gargs = [0, 1, 2, 3, 4, 5].map((i) => $('g' + i)), lits = [0, 1, 2, 3, 4, 5].map((i) => $('l' + i));
+  const eyeEls = [0, 1, 2, 3].map((i) => $('e' + i)); // e0 = largest pair (the correct one); e1–e3 are decoys
   const reduced = () => document.documentElement.dataset.motion === 'reduced';
 
   /* ---------- shared clock: all timers run on this, so Pause freezes them together ---------- */
@@ -78,6 +79,7 @@
     // stone chime per lit statue: three rising notes plus a low thud
     light(n) { const f = [330, 392, 494][n - 1] || 330; audio.tone(f, 0.9, 'triangle', 0.22); audio.tone(f * 2.01, 0.6, 'sine', 0.08, 0.03); audio.tone(90, 0.25, 'sine', 0.25, 0, 50); },
     rechime() { audio.tone(392, 0.5, 'triangle', 0.12); },
+    whisper() { audio.noise(0.7, 0.08, 3500, 1200, 0, 'highpass'); audio.tone(300, 0.5, 'sine', 0.04, 0, 200); },
     grumble() { audio.tone(95, 0.55, 'sawtooth', 0.12, 0, 55); audio.noise(0.5, 0.1, 500, 120, 0, 'lowpass'); },
     growl() { audio.tone(80, 1.1, 'sawtooth', 0.18, 0, 48); audio.tone(120, 1.0, 'square', 0.05, 0.05, 70); audio.noise(1.0, 0.12, 400, 100, 0, 'lowpass'); },
     rise() { audio.tone(60, 1.8, 'sawtooth', 0.12, 0, 220); audio.noise(1.6, 0.08, 300, 2000); },
@@ -107,12 +109,12 @@
   const HINTS = {
     statues: [
       [5000, 'The road is quiet… but the stone guardians seem to be watching you.'],
-      [20000, 'Some of the statues respond when you touch them.'],
-      [40000, 'Wake three of them and see what happens.'],
+      [20000, 'They wake in a certain order. Start on the left.'],
+      [40000, 'Left first, then climb to the top right, then come down to the bottom right.'],
     ],
     eyes: [
       [6000, 'Something is watching from the trees…'],
-      [20000, 'Look for a glint in the dark forest.'],
+      [20000, 'Many eyes glow in the dark. Trust the one that glares the biggest.'],
     ],
   };
   const hints = {
@@ -140,42 +142,49 @@
   }
   function flash() { if (reduced()) return; const f = $('flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
 
-  /* ---------- Story 1: "The Count Awakens" — light 3 statues → find the eyes → castle payoff ---------- */
+  /* ---------- Story 1: "The Count Awakens" — light the statues in order → find the right eyes → castle payoff ---------- */
+  const ORDER = [2, 3, 5]; // front-left (red-eyed), then top right, then bottom right
   const story = {
     mode: 'idle',        // idle | story (input locked while the payoff plays)
     phase: 'statues',    // statues | eyes
-    lit: new Set(),
+    progress: 0,         // how many statues of ORDER are lit
     tapStatue(i) {
       if (story.mode !== 'idle' || !clock.running) return;
       hints.reset();
       const el = gargs[i];
-      if (story.lit.has(i)) { sfx.rechime(); ringAt(el, '#5dff9a'); return; }        // already glowing
-      if (story.lit.size >= 3) {                                                     // the other three are decoys
-        sfx.grumble(); el.classList.add('grumble'); clock.after(400, () => el.classList.remove('grumble')); return;
+      if (lits[i].classList.contains('on')) { sfx.rechime(); ringAt(el, '#5dff9a'); return; }   // already glowing: harmless
+      if (story.phase === 'statues' && i === ORDER[story.progress]) {
+        story.progress++;
+        lits[i].classList.add('on', 'pop'); clock.after(500, () => lits[i].classList.remove('pop'));
+        sfx.light(story.progress); ringAt(el, '#5dff9a'); setPips(story.progress);
+        if (story.progress === ORDER.length) {
+          story.phase = 'eyes'; hints.reset();
+          toast('Something stirs in the dark forest…', 3000);
+          eyeEls.forEach((e, k) => clock.after(1200 + k * 300, () => { e.hidden = false; }));
+        }
+        return;
       }
-      story.lit.add(i);
-      el.classList.add('lit', 'pop'); clock.after(400, () => el.classList.remove('pop'));
-      sfx.light(story.lit.size); ringAt(el, '#5dff9a'); setPips(story.lit.size);
-      if (story.lit.size === 3) {
-        story.phase = 'eyes'; hints.reset();
-        toast('Something stirs in the dark forest…', 3000);
-        clock.after(1400, () => { eyes.hidden = false; });
-      }
+      // wrong statue: grumble; before the sequence is solved this also puts the lit statues back to sleep
+      sfx.grumble(); el.classList.add('grumble'); clock.after(400, () => el.classList.remove('grumble'));
+      if (story.phase === 'statues' && story.progress > 0) { story.resetStatues(); toast('The statues fall dark again…', 1800); }
     },
-    tapEyes() {
+    tapEyes(k) {
       if (story.mode !== 'idle' || !clock.running || story.phase !== 'eyes') return;
-      hints.reset(); sfx.growl(); ringAt(eyes, '#ff3a2a'); setPips(4); flash();
+      hints.reset();
+      const el = eyeEls[k];
+      if (k !== 0) {   // decoy pair: blinks shut for a moment
+        sfx.whisper(); ringAt(el, '#ff3a2a'); el.classList.add('shut'); clock.after(1500, () => el.classList.remove('shut')); return;
+      }
+      sfx.growl(); ringAt(el, '#ff3a2a'); setPips(4); flash();
       clock.after(900, story.play);
     },
-    reset() {
-      story.lit.clear(); story.phase = 'statues'; setPips(0); eyes.hidden = true;
-      gargs.forEach((g) => g.classList.remove('lit'));
-    },
-    play() { // ~8 s: thunder + door flare → Dracula in the doorway + creak → organ + bats → laugh → fade → rest
+    resetStatues() { story.progress = 0; setPips(0); lits.forEach((l) => l.classList.remove('on')); },
+    reset() { story.resetStatues(); story.phase = 'statues'; eyeEls.forEach((e) => { e.hidden = true; e.classList.remove('shut'); }); },
+    play() { // ~8 s: thunder + door flare → Dracula on the road + creak → organ + bats → laugh → fade → rest
       story.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show');
       document.activeElement && document.activeElement.blur();
       const at = (ms, fn) => clock.after(ms, fn), rm = reduced();
-      eyes.hidden = true; sfx.rise();
+      eyeEls.forEach((e) => { e.hidden = true; }); sfx.rise();
       at(900, () => { stage.classList.add('flare'); sfx.thunder(); flash(); });
       at(1800, () => { sfx.door(); $('dracula').classList.add('show'); });
       at(2800, () => {
@@ -188,7 +197,7 @@
       });
       at(4800, () => { sfx.laugh(); flash(); });
       at(5600, () => $('dracula').classList.remove('show'));
-      at(6200, () => { stage.classList.remove('flare'); gargs.forEach((g) => g.classList.remove('lit')); sfx.end(); });
+      at(6200, () => { stage.classList.remove('flare'); lits.forEach((l) => l.classList.remove('on')); sfx.end(); });
       at(7200, () => {
         story.reset(); story.mode = 'idle'; stage.classList.remove('story'); hints.reset();
         toast('The castle falls quiet… for now. Try again?', 3500);
@@ -217,7 +226,7 @@
     requestAnimationFrame((n) => { clock.last = n; clock.tick(n); });
   });
   gargs.forEach((g, i) => g.addEventListener('click', () => story.tapStatue(i)));
-  eyes.addEventListener('click', () => story.tapEyes());
+  eyeEls.forEach((e, k) => e.addEventListener('click', () => story.tapEyes(k)));
   $('pause').addEventListener('click', () => setPaused(!isPaused()));
   document.addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'p' && !stage.hidden) setPaused(!isPaused()); });
   document.addEventListener('visibilitychange', () => { if (document.hidden && !stage.hidden && !isPaused()) setPaused(true); });

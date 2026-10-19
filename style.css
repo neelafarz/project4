@@ -66,8 +66,8 @@ button { font: inherit; color: inherit; }
 .mc-b { top: 50%; width: 55%; opacity: .5; animation: cloudDrift 64s linear infinite alternate-reverse; }
 @keyframes cloudDrift { from { transform: translateX(-80%); } to { transform: translateX(150%); } }
 
-/* story: Dracula silhouette steps into the lit doorway (door is at ~60.2% / 27.4% of the stage) */
-.dracula { left: 60.2%; top: 27.4%; height: calc(var(--u) * 15); width: auto; transform: translate(-50%, -100%) scale(.55); transform-origin: 50% 100%;
+/* story: Dracula silhouette steps into the lit doorway (placed lower, on the road below the castle door) */
+.dracula { left: 58.1%; top: 35.6%; height: calc(var(--u) * 17); width: auto; transform: translate(-50%, -100%) scale(.55); transform-origin: 50% 100%;
   opacity: 0; transition: opacity .6s, transform 1.4s ease-out; pointer-events: none; }
 .dracula.show { opacity: 1; transform: translate(-50%, -100%) scale(1); }
 [data-motion="reduced"] .dracula, [data-motion="reduced"] .dracula.show { transform: translate(-50%, -100%); transition: opacity .6s; }
@@ -87,32 +87,27 @@ button { font: inherit; color: inherit; }
 .hotspot { transform: translate(-50%, -50%); border: 0; background: none; padding: 0; cursor: pointer; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); }
 .story .hotspot, .paused .hotspot { pointer-events: none; }
 
-/* gargoyle statues: a copy of the gargoyle layer, clipped to the statue, brightened and tinted green on light-up */
+/* gargoyle statues: invisible tap areas; the light-up is a per-statue image traced to the statue's silhouette, with a soft green rim */
 .garg { width: calc(var(--u) * var(--w)); height: calc(var(--u) * var(--h)); min-width: 48px; min-height: 48px; }
-.garg .clip { position: absolute; inset: 0; overflow: hidden; border-radius: 45%; pointer-events: none; }
-.garg .litimg { position: absolute; width: calc(var(--u) * 100); height: calc(var(--u) * 216.67);
-  left: calc(var(--u) * (var(--w) / 2 - var(--x))); top: calc(var(--u) * (var(--h) / 2 - var(--y) * 2.1667));
-  background: url(assets/img/castle_gargoyles.png) 0 0 / 100% 100%; opacity: 0; transition: opacity .3s;
-  filter: brightness(2.1) sepia(1) hue-rotate(65deg) saturate(3.2); }
-.garg .glow { position: absolute; inset: -25%; border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity .4s; mix-blend-mode: screen;
-  background: radial-gradient(circle, rgba(93, 255, 154, .6), transparent 65%); }
-.garg.lit .litimg { opacity: .9; }
-.garg.lit .glow { opacity: 1; }
-.garg.pop { animation: pop .4s ease-out; }
-@keyframes pop { 40% { transform: translate(-50%, -50%) scale(1.1); } }
+.lit { position: absolute; height: auto; pointer-events: none; opacity: 0; transition: opacity .4s;
+  filter: drop-shadow(0 0 calc(var(--u) * .8) rgba(93, 255, 154, .55)); }
+.lit.on { opacity: 1; }
+.lit.pop { animation: litPop .5s ease-out; }
+@keyframes litPop { 30% { filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(150, 255, 190, .9)) brightness(1.5); } }
+.story .lit.on { animation: surge .7s ease-in-out infinite alternate; }
+@keyframes surge { from { filter: drop-shadow(0 0 calc(var(--u) * .8) rgba(93, 255, 154, .5)); } to { filter: drop-shadow(0 0 calc(var(--u) * 2.4) rgba(120, 255, 170, .95)) brightness(1.25); } }
 .garg.grumble { animation: grumble .4s; }
 @keyframes grumble { 20%, 60% { transform: translate(calc(-50% - 3px), -50%); } 40%, 80% { transform: translate(calc(-50% + 3px), -50%); } }
-.story .garg.lit .glow { animation: surge .7s ease-in-out infinite alternate; }
-@keyframes surge { from { opacity: .6; } to { opacity: 1; transform: scale(1.25); } }
 
-/* forest eyes: appear after three statues are lit */
-.eyes { width: calc(var(--u) * 24); height: calc(var(--u) * 12); min-width: 72px; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 6); animation: eyesIn .8s ease-out; }
-.eyes i { display: block; width: calc(var(--u) * 6); height: calc(var(--u) * 2.6); border-radius: 80% 20% 80% 20% / 100% 100% 0 0; background: radial-gradient(ellipse at 50% 60%, #ffe9e4 6%, #ff3a2a 40%, #b00808 100%);
-  box-shadow: 0 0 6px 2px rgba(255, 40, 30, .75); transform-origin: center; animation: blink 4s infinite; }
+/* forest eyes: the largest pair is the correct one. Each pair fades in and out on its own cycle (--cy, --cd) */
+.eyes { width: calc(var(--u) * var(--s) * 14); height: calc(var(--u) * var(--s) * 8); min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * var(--s) * 3.6);
+  animation: eyeCycle var(--cy) ease-in-out var(--cd) infinite; }
+.eyes i { display: block; width: calc(var(--u) * var(--s) * 4.4); height: calc(var(--u) * var(--s) * 2); border-radius: 80% 20% 80% 20% / 100% 100% 0 0; background: radial-gradient(ellipse at 50% 60%, #ffe9e4 6%, #ff3a2a 40%, #b00808 100%);
+  box-shadow: 0 0 5px 1px rgba(255, 40, 30, .75); }
 .eyes i:first-child { transform: rotate(8deg); }
 .eyes i:last-child { transform: scaleX(-1) rotate(8deg); }
-@keyframes eyesIn { from { opacity: 0; } }
-@keyframes blink { 0%, 92%, 100% { opacity: 1; } 95% { opacity: .15; } }
+.eyes.shut { animation: none; opacity: .1; transition: opacity .2s; }
+@keyframes eyeCycle { 0%, 100% { opacity: 0; } 12%, 55% { opacity: 1; } 68% { opacity: 0; } }
 .ring { position: absolute; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--c, #5dff9a); animation: ring .7s ease-out forwards; pointer-events: none; }
 @keyframes ring { from { transform: translate(-50%, -50%) scale(1); opacity: 1; } to { transform: translate(-50%, -50%) scale(5); opacity: 0; } }
 
@@ -142,8 +137,8 @@ button { font: inherit; color: inherit; }
 
 /* reduced motion: no drifting, flying, shaking, pulsing or flashing — glow and fades only */
 [data-motion="reduced"] .mist, [data-motion="reduced"] .mc, [data-motion="reduced"] .castle-glow,
-[data-motion="reduced"] .garg.pop, [data-motion="reduced"] .garg.grumble, [data-motion="reduced"] .eyes i,
-[data-motion="reduced"] .story .garg.lit .glow { animation: none; }
+[data-motion="reduced"] .lit.pop, [data-motion="reduced"] .garg.grumble, [data-motion="reduced"] .eyes,
+[data-motion="reduced"] .story .lit.on { animation: none; }
 [data-motion="reduced"] #bats, [data-motion="reduced"] .flash { display: none; }
 [data-motion="reduced"] .ring { animation: ringFade .7s forwards; }
 @keyframes ringFade { from { opacity: 1; } to { opacity: 0; } }
