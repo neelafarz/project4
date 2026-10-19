@@ -66,6 +66,12 @@ button { font: inherit; color: inherit; }
 .mc-b { top: 50%; width: 55%; opacity: .5; animation: cloudDrift 64s linear infinite alternate-reverse; }
 @keyframes cloudDrift { from { transform: translateX(-80%); } to { transform: translateX(150%); } }
 
+/* story: Dracula silhouette steps into the lit doorway (door is at ~60.2% / 27.4% of the stage) */
+.dracula { left: 60.2%; top: 27.4%; height: calc(var(--u) * 15); width: auto; transform: translate(-50%, -100%) scale(.55); transform-origin: 50% 100%;
+  opacity: 0; transition: opacity .6s, transform 1.4s ease-out; pointer-events: none; }
+.dracula.show { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+[data-motion="reduced"] .dracula, [data-motion="reduced"] .dracula.show { transform: translate(-50%, -100%); transition: opacity .6s; }
+
 /* story: door flare, lightning, bats */
 .door-flare { inset: auto; left: 38%; top: 14%; width: 44%; height: 20%; mix-blend-mode: screen; opacity: 0; transition: opacity .4s;
   background: radial-gradient(closest-side at 50% 62%, rgba(255, 80, 50, .85), rgba(255, 80, 50, .35) 45%, transparent); }

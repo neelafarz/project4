@@ -33,10 +33,10 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
 - **Story 1, "The Count Awakens" (~8 s payoff):**
   1. Tap any three of the six gargoyle statues. Each lights up green with a rising stone chime, a ring and a progress dot (3 green dots). Tapping a lit statue just re-chimes; once three are lit, the other three only grumble (decoys).
   2. After the third, a toast says something stirs and red eyes open in the forest after ~1.4 s. Tapping them growls, lights the 4th (red) dot and starts the payoff.
-  3. Payoff: rumble → lightning + castle door flare (0.9 s) → door creak → organ sting + bats burst (2.8 s) → laugh + second flash (4.8 s) → glows fade (6.2 s) → rest and toast (7.2 s). All taps are locked meanwhile; then everything resets and it replays.
+  3. Payoff: rumble → lightning + castle door flare (0.9 s) → door creak + Dracula silhouette steps into the lit doorway (1.8 s, gone by 5.6 s) → organ sting + bats burst (2.8 s) → laugh + second flash (4.8 s) → glows fade (6.2 s) → rest and toast (7.2 s). All taps are locked meanwhile; then everything resets and it replays.
   4. Hints by idle time, per phase: statues phase 5 s / 20 s / 40 s; eyes phase 6 s / 20 s. Reset on any interaction.
 - **Reduced motion:** no mist/cloud drift, window flicker, bats, flashes, shaking or pulsing; glows and fades only.
-- **Not built yet:** Dracula figure (waiting on the Developer's layer); Phase 2 stories 2 and 3.
+- **Not built yet:** Phase 2 stories 2 and 3. Dracula is one supplied silhouette (`castle_dracula.png`) shown in the door; a window peek is a possible variation.
 - **Acceptance (automated, headless Chromium 390×844):** any-three logic, decoy behavior, eyes appear/hidden states, payoff lock + reset + replay, Pause freezes the payoff, tap targets ≥48px, reduced-motion attribute, zero console errors. **Not yet verified:** physical phone (see `plan.md`).
 
 ## Scope and revisions

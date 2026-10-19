@@ -171,13 +171,13 @@
       story.lit.clear(); story.phase = 'statues'; setPips(0); eyes.hidden = true;
       gargs.forEach((g) => g.classList.remove('lit'));
     },
-    play() { // ~8 s: thunder + door flare → organ + bats → laugh → fade → rest
+    play() { // ~8 s: thunder + door flare → Dracula in the doorway + creak → organ + bats → laugh → fade → rest
       story.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show');
       document.activeElement && document.activeElement.blur();
       const at = (ms, fn) => clock.after(ms, fn), rm = reduced();
       eyes.hidden = true; sfx.rise();
       at(900, () => { stage.classList.add('flare'); sfx.thunder(); flash(); });
-      at(1800, () => sfx.door());
+      at(1800, () => { sfx.door(); $('dracula').classList.add('show'); });
       at(2800, () => {
         sfx.organ(); sfx.bats();
         if (!rm) {
@@ -187,6 +187,7 @@
         }
       });
       at(4800, () => { sfx.laugh(); flash(); });
+      at(5600, () => $('dracula').classList.remove('show'));
       at(6200, () => { stage.classList.remove('flare'); gargs.forEach((g) => g.classList.remove('lit')); sfx.end(); });
       at(7200, () => {
         story.reset(); story.mode = 'idle'; stage.classList.remove('story'); hints.reset();

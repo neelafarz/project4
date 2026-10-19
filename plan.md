@@ -25,7 +25,7 @@ Test each result before continuing, including related behavior that already work
 - [x] First prototype (pumpkin concept) built, deployed and Developer-tested on desktop; tagged `pumpkin-v1`
 - [x] Concept changed to the castle version (Developer decision; see `research.md`)
 - [x] Castle prototype built: three art layers, effects, start screen, Pause, hints, Story 1; headless test passes (see `spec.md`)
-- [ ] Developer provides the Dracula layer; add it to the payoff
+- [x] Dracula silhouette received and added to the payoff (door)
 - [ ] Developer approves spec and checks hotspot/glow alignment
 - [ ] Deploy castle version to the public HTTPS URL (GitHub Pages from `main`)
 - [ ] Verify on physical phone (below)
@@ -39,7 +39,7 @@ Test each result before continuing, including related behavior that already work
 ### Developer must verify on a physical phone
 1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
 2. Tap targets: all six statues and the forest eyes are comfortable to hit; the decoy statues grumble.
-3. Green gargoyle glow lines up with each statue; the forest eyes are easy to see and tap.
+3. Dracula appears in the lit doorway at the right size and place; green gargoyle glow lines up with each statue; the forest eyes are easy to see and tap.
 4. Pause freezes sound, motion, and blocks taps; Play resumes. Lock the screen / switch apps: it should auto-pause.
 5. Full payoff plays ~8 s, taps are ignored during it, and it replays.
 6. Reduce motion checkbox (and the phone's Reduce Motion setting) removes mist/cloud drift, flicker, bats and flashes.
