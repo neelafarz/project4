@@ -39,6 +39,15 @@
       // Ambient layers load in the background; scene works without them if they fail.
       this.loop('assets/audio/dungeon_ambient_1.mp3', 0.55);
       this.loop('assets/audio/wind_whoosh_loop.mp3', 0.22);
+      this.load('assets/audio/owl_hoot.mp3').then((b) => { this.owlBuf = b; });
+    },
+    async load(url) {
+      try { return await this.ctx.decodeAudioData(await (await fetch(url)).arrayBuffer()); }
+      catch (e) { console.warn('audio load failed', url, e); return null; }
+    },
+    playBuffer(buf, vol = 0.5) {
+      const src = this.ctx.createBufferSource(), g = this.ctx.createGain();
+      src.buffer = buf; g.gain.value = vol; src.connect(g).connect(this.master); src.start();
     },
     async loop(url, vol) {
       try {
@@ -80,9 +89,12 @@
     embers() { audio.noise(1.2, 0.18, 800, 3500); },
     cackle() { [330, 280, 330, 260, 300].forEach((f, i) => audio.tone(f, 0.14, 'square', 0.1, i * 0.17, f * 0.8)); },
     fizzle() { audio.noise(1.6, 0.22, 5000, 400, 0, 'highpass'); audio.tone(900, 1.4, 'sine', 0.06, 0, 120); },
-    // distant owl: soft low sine "hoo ... hoo-hoo" with a slight downward glide
-    owl() { [[0, 420, 0.5], [0.8, 400, 0.3], [1.2, 380, 0.45]].forEach(([d, f, len]) => {
-      audio.tone(f, len, 'sine', 0.1, d, f * 0.82); audio.tone(f * 2, len, 'sine', 0.025, d, f * 1.6); }); },
+    // owl: recorded clip (Freesound, see credits); synthesized "hoo ... hoo-hoo" fallback if it did not load
+    owl() {
+      if (audio.owlBuf) return audio.playBuffer(audio.owlBuf, 0.45);
+      [[0, 420, 0.5], [0.8, 400, 0.3], [1.2, 380, 0.45]].forEach(([d, f, len]) => {
+        audio.tone(f, len, 'sine', 0.1, d, f * 0.82); audio.tone(f * 2, len, 'sine', 0.025, d, f * 1.6); });
+    },
     end() { audio.tone(196, 1.2, 'sine', 0.2); audio.tone(147, 1.4, 'sine', 0.2, 0.25); },
   };
 
