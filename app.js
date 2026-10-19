@@ -4,7 +4,7 @@
   'use strict';
   const $ = (id) => document.getElementById(id);
   const stage = $('stage'), hintEl = $('hint'), toastEl = $('toast');
-  const gargs = [0, 1, 2, 3, 4, 5].map((i) => $('g' + i)), lits = [0, 1, 2, 3, 4, 5].map((i) => $('l' + i));
+  const gargs = [0, 1, 2, 3, 4, 5].map((i) => $('g' + i)), seyes = [0, 1, 2, 3, 4, 5].map((i) => $('se' + i)); // statue eyes (glow red when activated)
   const eyeEls = [0, 1, 2, 3, 4].map((i) => $('e' + i)); // e0 = largest pair (the correct one); e1–e4 are decoys
   const reduced = () => document.documentElement.dataset.motion === 'reduced';
 
@@ -36,21 +36,11 @@
       this.master.gain.value = 0;
       this.master.connect(this.ctx.destination);
       this.master.gain.linearRampToValueAtTime(0.9, this.ctx.currentTime + 2);
-      this.startRain();
       // Ambient layers load in the background; the scene works without them if they fail.
       this.load('assets/audio/dungeon_ambient_1.mp3').then((b) => b && this.loop(b, 0.55));
       this.load('assets/audio/wind_whoosh_loop.mp3').then((b) => b && this.loop(b, 0.22));
       this.load('assets/audio/owl_hoot.mp3').then((b) => { this.owlBuf = b; });
       this.load('assets/audio/toccata_intro.mp3').then((b) => { this.toccataBuf = b; });
-    },
-    // light rain: looped noise through a band-pass, mixed low under the other ambience
-    startRain() {
-      const n = this.ctx.sampleRate * 3, buf = this.ctx.createBuffer(1, n, this.ctx.sampleRate), d = buf.getChannelData(0);
-      let last = 0; for (let i = 0; i < n; i++) { const w = Math.random() * 2 - 1; last = 0.7 * last + 0.3 * w; d[i] = last * 2.2; }   // softened noise
-      const src = this.ctx.createBufferSource(), hp = this.ctx.createBiquadFilter(), lp = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
-      src.buffer = buf; src.loop = true; hp.type = 'highpass'; hp.frequency.value = 1400; lp.type = 'lowpass'; lp.frequency.value = 7000;
-      g.gain.setValueAtTime(0.0001, this.ctx.currentTime); g.gain.linearRampToValueAtTime(0.07, this.ctx.currentTime + 4);
-      src.connect(hp).connect(lp).connect(g).connect(this.master); src.start();
     },
     async load(url) {
       try { return await this.ctx.decodeAudioData(await (await fetch(url)).arrayBuffer()); }
@@ -142,12 +132,6 @@
       scheduleLightning();
     });
   }
-  /* light rain streaks (decorative) */
-  function buildRain() {
-    $('rain').innerHTML = Array.from({ length: 34 }, (_, i) =>
-      `<span class="drop" style="--x:${(i * 29 + 7) % 104}%;--t:${0.9 + (i % 5) * 0.14}s;--d:${-((i * 37) % 17) / 10}s"></span>`).join('');
-  }
-
   /* ---------- progressive hints: by idle time since the player last interacted, per story phase ---------- */
   const HINTS = {
     statues: [
@@ -195,10 +179,10 @@
       if (story.mode !== 'idle' || !clock.running) return;
       hints.reset();
       const el = gargs[i];
-      if (lits[i].classList.contains('on')) { sfx.rechime(); ringAt(el, '#ff5a4a'); return; }   // already glowing: harmless
+      if (seyes[i].classList.contains('on')) { sfx.rechime(); ringAt(el, '#ff5a4a'); return; }   // already glowing: harmless
       if (story.phase === 'statues' && i === ORDER[story.progress]) {
         story.progress++;
-        lits[i].classList.add('on', 'pop'); clock.after(500, () => lits[i].classList.remove('pop'));
+        seyes[i].classList.add('on', 'pop'); clock.after(500, () => seyes[i].classList.remove('pop'));
         sfx.light(story.progress); ringAt(el, '#ff5a4a'); setPips(story.progress);
         if (story.progress === ORDER.length) {
           story.phase = 'eyes'; hints.reset();
@@ -221,7 +205,7 @@
       sfx.growl(); ringAt(el, '#ff3a2a'); setPips(4); flash();
       clock.after(900, story.play);
     },
-    resetStatues() { story.progress = 0; setPips(0); lits.forEach((l) => l.classList.remove('on')); },
+    resetStatues() { story.progress = 0; setPips(0); seyes.forEach((l) => l.classList.remove('on')); },
     reset() { story.resetStatues(); story.phase = 'statues'; eyeEls.forEach((e) => { e.hidden = true; e.classList.remove('shut'); }); },
     play() { // ~8.5 s: thunder + door flare → Dracula steps out + creak → Toccata + bats → laugh → fade → rest
       story.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show');
@@ -240,20 +224,13 @@
         }
       });
       at(7000, () => { sfx.laugh(); flash(); $('dracula').classList.remove('show'); $('dracShadow').classList.remove('show'); });
-      at(7500, () => { stage.classList.remove('flare'); lits.forEach((l) => l.classList.remove('on')); sfx.end(); });
+      at(7500, () => { stage.classList.remove('flare'); seyes.forEach((l) => l.classList.remove('on')); sfx.end(); });
       at(8500, () => {
         story.reset(); story.mode = 'idle'; stage.classList.remove('story'); hints.reset();
         toast('The castle falls quiet… for now. Try again?', 3500);
       });
     },
   };
-
-  /* ---------- ambient leaves: generated once on Enter, falling from the tree canopy (decorative) ---------- */
-  function buildLeaves() {
-    const colors = ['#6b3a2e', '#8a4b2f', '#3a4a70', '#5a3a52', '#7a5a2a'];
-    $('leaves').innerHTML = Array.from({ length: 11 }, (_, i) =>
-      `<span class="leaf" style="--x:${(i * 9 + 3 + (i % 3) * 2) % 94}%;--y0:${30 + (i % 4) * 4}%;--t:${13 + (i % 5) * 2}s;--d:${-i * 1.9}s;--c:${colors[i % 5]}"></span>`).join('');
-  }
 
   /* ---------- global Play/Pause: audio, CSS animation, shared timers and interaction together ---------- */
   function setPaused(paused) {
@@ -269,7 +246,7 @@
   $('reduceMotion').checked = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('enter').addEventListener('click', async () => {
     document.documentElement.dataset.motion = $('reduceMotion').checked ? 'reduced' : 'full';
-    $('start').hidden = true; stage.hidden = false; buildLeaves(); buildRain();
+    $('start').hidden = true; stage.hidden = false;
     await audio.init();
     hints.reset(); scheduleOwl(true); scheduleLightning(true);
     $('pause').focus({ preventScroll: true });

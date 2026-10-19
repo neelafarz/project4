@@ -75,17 +75,7 @@ button { font: inherit; color: inherit; }
 .lightning.on .bolt { animation: boltFlash .5s ease-out; }
 @keyframes skyFlash { 0% { opacity: 0; } 8% { opacity: 1; } 20% { opacity: .2; } 32% { opacity: .85; } 100% { opacity: 0; } }
 @keyframes boltFlash { 0% { opacity: 0; } 8% { opacity: 1; } 22% { opacity: .1; } 34% { opacity: .9; } 100% { opacity: 0; } }
-/* ambient 5: light rain (sparse drops in front of the scene) */
-.drop { position: absolute; top: -4%; left: var(--x); width: 1px; height: calc(var(--u) * 3.2); background: linear-gradient(transparent, rgba(190, 210, 255, .55));
-  animation: rainFall var(--t) linear infinite; animation-delay: var(--d); }
-@keyframes rainFall { to { transform: translate(calc(var(--u) * -5), calc(var(--u) * 225)); } }
-
 /* ambient 6–8: leaves falling from the trees, bats flying out of the trees now and then, a spider crawling across the path */
-.leaf { position: absolute; top: var(--y0); left: var(--x); width: calc(var(--u) * 2.6); height: calc(var(--u) * 2.6); background: var(--c); border-radius: 0 100% 0 100%; opacity: .9;
-  animation: leafFall var(--t) linear infinite; animation-delay: var(--d); }
-@keyframes leafFall { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 8% { opacity: .9; } 25% { transform: translate(calc(var(--u) * 7), calc(var(--u) * 30)) rotate(130deg); }
-  50% { transform: translate(calc(var(--u) * -6), calc(var(--u) * 62)) rotate(250deg); } 75% { transform: translate(calc(var(--u) * 6), calc(var(--u) * 92)) rotate(340deg); opacity: .9; }
-  100% { transform: translate(0, calc(var(--u) * 118)) rotate(430deg); opacity: 0; } }
 .tbat { position: absolute; width: calc(var(--u) * 9); height: calc(var(--u) * 5); opacity: 0; }
 .tbat svg { width: 100%; height: 100%; fill: #05071a; animation: flap .28s ease-in-out infinite alternate; transform-origin: 50% 60%; }
 @keyframes flap { to { transform: scaleY(.5); } }
@@ -96,11 +86,12 @@ button { font: inherit; color: inherit; }
 @keyframes batB { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 1.5% { opacity: 1; } 7% { transform: translate(calc(var(--u) * -24), calc(var(--u) * -4)) scale(.9); }
   13% { transform: translate(calc(var(--u) * -56), calc(var(--u) * -26)) scale(1.1); } 19% { transform: translate(calc(var(--u) * -96), calc(var(--u) * -44)) scale(1.3); opacity: 1; } 20% { opacity: 0; } 100% { opacity: 0; } }
 .spider { position: absolute; left: 36%; top: 87.5%; width: calc(var(--u) * 8.5); height: calc(var(--u) * 5.7); opacity: 0; animation: spiderWalk 40s linear infinite; animation-delay: -3s; }
-.spider svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 1.5px #b8c8ff) drop-shadow(0 0 3px rgba(150, 175, 255, .7)); }
-.spider .sbody { fill: #05071a; } .spider .seye { fill: #ff4a3a; }
-.spider .legs path { fill: none; stroke: #05071a; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.legs-a { animation: legsOn .26s steps(1) infinite; } .legs-b { animation: legsOn .26s steps(1) infinite reverse; }
-@keyframes legsOn { 0% { opacity: 1; } 50% { opacity: 0; } }
+.spider svg { width: 100%; height: 100%; overflow: visible; }
+.spider .sbody { fill: #000; } .spider .seye2 { fill: #ff2a1a; filter: drop-shadow(0 0 2px #ff2a1a) drop-shadow(0 0 4px #ff2a1a); }
+.spider .legs path { fill: none; stroke: #000; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.legs { transform-origin: 26px 22px; }
+.legs-a { animation: legSwing .3s ease-in-out infinite alternate; } .legs-b { animation: legSwing .3s ease-in-out infinite alternate-reverse; }
+@keyframes legSwing { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
 @keyframes spiderWalk { 0% { opacity: 0; transform: translate(0, 0); } 2% { opacity: 1; } 22% { transform: translate(calc(var(--u) * 17), calc(var(--u) * -1.5)); }
   42% { opacity: 1; transform: translate(calc(var(--u) * 33), calc(var(--u) * 1)); } 44% { opacity: 0; transform: translate(calc(var(--u) * 34), calc(var(--u) * 1)); } 100% { opacity: 0; } }
 
@@ -131,13 +122,14 @@ button { font: inherit; color: inherit; }
 
 /* gargoyle statues: invisible tap areas; the light-up is a per-statue image traced to the statue's silhouette, with a soft green rim */
 .garg { width: calc(var(--u) * var(--w)); height: calc(var(--u) * var(--h)); min-width: 48px; min-height: 48px; }
-.lit { position: absolute; height: auto; pointer-events: none; opacity: 0; transition: opacity .4s;
-  filter: drop-shadow(0 0 calc(var(--u) * .8) rgba(255, 70, 55, .6)); }
-.lit.on { opacity: 1; }
-.lit.pop { animation: litPop .5s ease-out; }
-@keyframes litPop { 30% { filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(255, 120, 100, .9)) brightness(1.5); } }
-.story .lit.on { animation: surge .7s ease-in-out infinite alternate; }
-@keyframes surge { from { filter: drop-shadow(0 0 calc(var(--u) * .8) rgba(255, 70, 55, .5)); } to { filter: drop-shadow(0 0 calc(var(--u) * 2.4) rgba(255, 90, 70, .95)) brightness(1.25); } }
+/* statue eyes: invisible until the statue is activated, then glow red */
+.seye { position: absolute; width: calc(var(--u) * var(--w)); height: calc(var(--u) * var(--w) * .55); transform: translate(-50%, -50%) rotate(-12deg); border-radius: 50%; opacity: 0; pointer-events: none;
+  background: radial-gradient(ellipse, #fff0ee 8%, #ff3328 42%, #a00 100%); box-shadow: 0 0 calc(var(--u) * 1.2) calc(var(--u) * .35) rgba(255, 40, 30, .9); transition: opacity .3s; }
+.seye.on { opacity: 1; }
+.seye.pop { animation: eyePop .5s ease-out; }
+@keyframes eyePop { 30% { transform: translate(-50%, -50%) rotate(-12deg) scale(1.9); } }
+.story .seye.on { animation: eyeSurge .7s ease-in-out infinite alternate; }
+@keyframes eyeSurge { from { box-shadow: 0 0 calc(var(--u) * 1.2) calc(var(--u) * .35) rgba(255, 40, 30, .7); } to { box-shadow: 0 0 calc(var(--u) * 2.8) calc(var(--u) * .9) rgba(255, 60, 40, 1); } }
 .garg.grumble { animation: grumble .4s; }
 @keyframes grumble { 20%, 60% { transform: translate(calc(-50% - 3px), -50%); } 40%, 80% { transform: translate(calc(-50% + 3px), -50%); } }
 
@@ -179,9 +171,9 @@ button { font: inherit; color: inherit; }
 
 /* reduced motion: no drifting, flying, shaking, pulsing or flashing — glow and fades only */
 [data-motion="reduced"] .mist, [data-motion="reduced"] .mc, [data-motion="reduced"] .castle-glow,
-[data-motion="reduced"] .lit.pop, [data-motion="reduced"] .garg.grumble, [data-motion="reduced"] .eyes,
-[data-motion="reduced"] .story .lit.on { animation: none; }
-[data-motion="reduced"] #bats, [data-motion="reduced"] .flash, [data-motion="reduced"] .lightning, [data-motion="reduced"] #rain, [data-motion="reduced"] #leaves, [data-motion="reduced"] #treebats, [data-motion="reduced"] .spider { display: none; }
+[data-motion="reduced"] .seye.pop, [data-motion="reduced"] .garg.grumble, [data-motion="reduced"] .eyes,
+[data-motion="reduced"] .story .seye.on { animation: none; }
+[data-motion="reduced"] #bats, [data-motion="reduced"] .flash, [data-motion="reduced"] .lightning, [data-motion="reduced"] #treebats, [data-motion="reduced"] .spider { display: none; }
 [data-motion="reduced"] .ring { animation: ringFade .7s forwards; }
 @keyframes ringFade { from { opacity: 1; } to { opacity: 0; } }
 [data-motion="reduced"] .hint, [data-motion="reduced"] .toast { transition: none; }

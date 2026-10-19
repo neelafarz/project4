@@ -57,6 +57,11 @@ Test each result before continuing, including related behavior that already work
 - **Changes:** all added as decoration layers (see `spec.md` ambient effects). First spider was dark on a dark path and almost invisible in my screenshot, so it is larger with a pale rim.
 - **Verified (headless Chromium, screenshots reviewed):** 34 rain drops and 11 leaves built; ambient lightning fires by itself ~11 s in and brightens the sky with the castle in silhouette; bat and spider visible when their cycles are advanced; Pause freezes leaves, rain and spider; reduced motion hides them; story still passes (order, decoys, payoff, replay); zero console errors. **Not verified:** how the rain and thunder sound or how loud they are against the music (Developer to listen); whether the flashes feel too frequent or too bright on a phone.
 
+### Revision 6 (Developer's test of Revision 5)
+- **Observed (Developer):** rain too loud; still a green glow on the statues; leaves too brown; spider had only four legs and glowed (wanted fully black with a glowing red eye); idea that statues should start without glowing eyes and their eyes glow red when tapped, instead of any silhouette glow.
+- **Changes:** rain (sound and streaks) and leaves removed; thunder and lightning kept. Statue activation is now glowing red eyes on dormant statues, using a derived dormant gargoyle layer (original untouched); the old silhouette-glow images deleted. Spider redrawn: solid black, eight legs always drawn and swinging in two alternating sets, glowing red eyes, no rim light. Image links now carry version tags so old cached images cannot reappear.
+- **Verified (headless Chromium, screenshots reviewed):** all six statues dormant with no red or green; red eyes appear in the right place on all six when activated; spider has eight legs; story regression passes (order, reset, decoys, payoff, replay, reduced motion); zero console errors. **Not verified:** the Developer's own browser/phone after a hard refresh; whether the eye size reads well on a small screen.
+
 ### Developer must verify on a physical phone
 1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
 2. Tap targets: all six statues and the four eye pairs are comfortable to hit (the small right-side pairs have a 48 px target); wrong statues grumble.

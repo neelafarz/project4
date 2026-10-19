@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a1030">
 <title>Virtual Hallo-weenie</title>
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
 
@@ -29,7 +29,7 @@
       <li>Wind layer "Wind whoosh loop" by SketchMan3, <a href="https://opengameart.org/content/wind-whoosh-loop">CC0</a></li>
       <li>Owl hoot "OwlHoot(clean).wav" by musicmasta1 (a cleaned-up clip from "Owls in the Night" by Npeo), <a href="https://freesound.org/people/musicmasta1/sounds/251937/">Freesound</a>, licensed <a href="https://creativecommons.org/licenses/by-nc/3.0/">CC BY-NC 3.0</a>; converted to MP3</li>
       <li>Dracula's entrance music: first 6 seconds of "J S Bach-Toccata and Fugue" by mariomf_cardoso, <a href="https://freesound.org/people/mariomf_cardoso/sounds/673357/">Freesound</a>, <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>; trimmed with a fade and converted to MP3</li>
-      <li>Rain, distant thunder and other sound effects: original, synthesized in code for this project</li>
+      <li>Distant thunder and other sound effects: original, synthesized in code for this project</li>
     </ul>
   </details>
 </section>
@@ -49,28 +49,25 @@
   <div class="fx mist mist-b" aria-hidden="true"></div>
   <div class="fx" id="bats" aria-hidden="true"></div>
   <img class="layer" src="assets/img/castle_forest.png" alt="" width="852" height="1846" decoding="async">
-  <!-- Ambient wildlife between the forest and the gargoyles: falling leaves, bats out of the trees, a crawling spider -->
-  <div class="fx" id="leaves" aria-hidden="true"></div>
+  <!-- Ambient wildlife between the forest and the gargoyles: bats out of the trees, a crawling spider -->
   <div class="fx" id="treebats" aria-hidden="true">
     <div class="tbat tbat-a"><svg viewBox="0 0 40 22"><path d="M20 20 L16 9 L11 12 L0 2 Q8 12 6 18 Q12 14 16 20 Q18 17 20 20 Q22 17 24 20 Q28 14 34 18 Q32 12 40 2 L29 12 L24 9Z"/></svg></div>
     <div class="tbat tbat-b"><svg viewBox="0 0 40 22"><path d="M20 20 L16 9 L11 12 L0 2 Q8 12 6 18 Q12 14 16 20 Q18 17 20 20 Q22 17 24 20 Q28 14 34 18 Q32 12 40 2 L29 12 L24 9Z"/></svg></div>
   </div>
   <div class="fx" aria-hidden="true"><div class="spider"><svg viewBox="0 0 60 40">
-    <g class="legs legs-a"><path d="M30 16 L38 4 L48 8 M28 26 L36 36 L46 34 M20 18 L14 6 L6 10 M18 26 L10 36 L2 34"/></g>
-    <g class="legs legs-b"><path d="M32 18 L42 8 L52 14 M30 28 L40 38 L50 38 M22 17 L18 4 L8 6 M20 27 L12 37 L4 38"/></g>
+    <g class="legs legs-a"><path d="M30 17 L38 5 L48 9 M28 27 L36 37 L46 35 M21 17 L14 5 L6 9 M19 27 L11 37 L3 35"/></g>
+    <g class="legs legs-b"><path d="M32 19 L42 10 L53 15 M30 29 L40 39 L51 39 M23 16 L18 3 L8 5 M21 28 L13 38 L5 39"/></g>
     <ellipse cx="26" cy="22" rx="13" ry="9" class="sbody"/><circle cx="42" cy="21" r="6" class="sbody"/>
-    <circle cx="46" cy="19" r="1.2" class="seye"/><circle cx="46" cy="23" r="1.2" class="seye"/></svg></div></div>
-  <img class="layer" src="assets/img/castle_gargoyles.png" alt="" width="852" height="1846" decoding="async">
+    <circle cx="45" cy="19" r="1.7" class="seye2"/><circle cx="45" cy="23" r="1.7" class="seye2"/></svg></div></div>
+  <img class="layer" src="assets/img/castle_gargoyles_dormant.png?v=13" alt="" width="852" height="1846" decoding="async">
 
-  <div class="fx" id="rain" aria-hidden="true"></div>
-
-  <!-- Per-statue glow images (traced from the gargoyle layer; shown when a statue is lit) -->
-  <img class="lit" id="l0" src="assets/img/lit_g0.png" alt="" aria-hidden="true" style="left:0.00%;top:54.06%;width:23.94%" decoding="async">
-  <img class="lit" id="l1" src="assets/img/lit_g1.png" alt="" aria-hidden="true" style="left:20.66%;top:62.51%;width:15.26%" decoding="async">
-  <img class="lit" id="l2" src="assets/img/lit_g2.png" alt="" aria-hidden="true" style="left:0.00%;top:70.64%;width:40.73%" decoding="async">
-  <img class="lit" id="l3" src="assets/img/lit_g3.png" alt="" aria-hidden="true" style="left:82.51%;top:53.52%;width:17.49%" decoding="async">
-  <img class="lit" id="l4" src="assets/img/lit_g4.png" alt="" aria-hidden="true" style="left:75.47%;top:66.96%;width:24.53%" decoding="async">
-  <img class="lit" id="l5" src="assets/img/lit_g5.png" alt="" aria-hidden="true" style="left:59.04%;top:76.27%;width:40.96%" decoding="async">
+  <!-- Statue eyes: dark until a statue is activated, then they glow red -->
+  <i class="seye" id="se0" aria-hidden="true" style="left:19.84%;top:58.94%;--w:1.8"></i>
+  <i class="seye" id="se1" aria-hidden="true" style="left:32.98%;top:64.30%;--w:1.4"></i>
+  <i class="seye" id="se2" aria-hidden="true" style="left:34.98%;top:79.58%;--w:2.0"></i>
+  <i class="seye" id="se3" aria-hidden="true" style="left:85.56%;top:57.96%;--w:1.5"></i>
+  <i class="seye" id="se4" aria-hidden="true" style="left:78.52%;top:70.86%;--w:1.5"></i>
+  <i class="seye" id="se5" aria-hidden="true" style="left:66.31%;top:81.26%;--w:2.6"></i>
 
   <!-- Interactive hotspots: six gargoyle statues, plus forest eyes (largest = correct) that appear once the statue order is solved -->
   <button class="hotspot garg" id="g0" type="button" aria-label="Gargoyle statue, upper left" style="--x:11.15;--y:60.89;--w:22.30;--h:26.29"></button>
@@ -99,6 +96,6 @@
   <div class="flash" id="flash" aria-hidden="true"></div>
 </main>
 
-<script src="app.js?v=12"></script>
+<script src="app.js?v=13"></script>
 </body>
 </html>
