@@ -24,6 +24,23 @@ Record only what informs the next build decisions:
 
 Investigate unfamiliar techniques or asset sources as needed. Verify usage terms and keep source links and required credits here. Distinguish evidence from assumptions; the Agent's recommendation alone is not evidence.
 
+### Decisions (Phase 1)
+- **Scene:** moonlit haunted hill, graveyard, pumpkin patch. Chosen because the Developer supplied the artwork (`assets/img/scene.png`, used unaltered). My first code-drawn SVG scene was rejected by the Developer on art style.
+- **Story 1, "The Patch Awakens":** tap three unlit pumpkins small → medium → large; ~7.5 s payoff. Alternatives not built (Phase 2 candidates): lantern-lit gate opening, ghost procession along the path.
+- **Audio approach:** two CC0 loops for the ambient bed; interaction/story sound effects are synthesized with Web Audio (original, no licence needed). Chosen because no verified CC0 owl/cackle clip was found quickly (OpenGameArt owl results were CC-BY-SA).
+- **Format:** OGG sources converted to MP3 (96 kbps) because OGG support on iOS Safari is uncertain. Conversion is a format change only.
+
+### Asset sources (verified on the source page, 2026-10-19)
+| Asset | Author | Licence | Source |
+|---|---|---|---|
+| Loopable Dungeon Ambience (`dungeon_ambient_1`) | JaggedStone | CC0 1.0 | https://opengameart.org/content/loopable-dungeon-ambience |
+| Wind whoosh loop | SketchMan3 | CC0 1.0 | https://opengameart.org/content/wind-whoosh-loop |
+| Scene image `assets/img/scene.png` | Supplied by Developer | **Developer to record origin/licence (e.g. which AI tool) before delivery** | n/a |
+
+### Assumptions / limits
+- Loop points: MP3 encoding may leave a tiny gap at the loop seam. Not yet judged by ear.
+- Pumpkin hotspot positions were mapped by eye onto the image; the face overlay is an effect layer drawn over the image.
+
 ## Revisions
 
 Update decisions when new evidence changes the direction, linking to playtest observations in `plan.md` rather than copying them. Keep chosen behavior and asset requirements in `spec.md`. The Developer confirms when the inquiry is sufficient to continue building; exhaustive research is not a prerequisite.

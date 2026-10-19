@@ -20,6 +20,29 @@ Create your own checklist for the next few results, using the workflow in `brief
 
 Test each result before continuing, including related behavior that already works. Update priorities as evidence emerges and preserve meaningful working checkpoints in git. Before delivery, verify the deployed app against the brief and specification.
 
+### Phase 1 checkpoints
+- [x] Read brief and project docs
+- [x] CC0 ambient audio sourced and licences checked
+- [x] Prototype built: `index.html`, `style.css`, `app.js`
+- [x] Art swapped to Developer-supplied image (first SVG art rejected)
+- [x] Headless browser test passes (see `spec.md` acceptance list)
+- [ ] Developer approves spec and art overlay alignment
+- [ ] Deploy to public HTTPS URL (GitHub Pages from `main`)
+- [ ] Verify on physical phone (below)
+
+**Main risk:** audio on iOS Safari (autoplay unlock, MP3 loop gap) and overlay alignment of hotspots on real screens.
+
+### Developer must verify on a physical phone
+1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
+2. Tap targets: small pumpkin at far right edge is comfortable to hit; door and gravestones respond.
+3. Glow overlay lines up with the pumpkins and house door.
+4. Pause freezes sound, motion, and blocks taps; Play resumes. Lock the screen / switch apps: it should auto-pause.
+5. Full story plays ~7.5 s, taps are ignored during it, and it replays.
+6. Reduce motion checkbox (and the phone's Reduce Motion setting) removes bats/leaves/flash.
+7. Layout fits without scrolling in portrait; text is readable; no performance stutter.
+8. Hints appear after idle time.
+
+
 ## Evidence and revisions
 
 Record non-identifying playtest observations, separating what Users did or said from your interpretation. Use the findings to choose revision priorities and record what changed and how you verified the improvement.

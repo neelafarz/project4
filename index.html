@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120a24">
+<title>Virtual Hallo-weenie</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Start screen: Enter unlocks audio and applies the motion choice -->
+<section id="start" class="start" aria-labelledby="title">
+  <h1 id="title">Virtual<br>Hallo<span>weenie</span></h1>
+  <p class="tagline">A little spooky. A little playful.<br>Something is waiting in the pumpkin patch.</p>
+  <label class="motion-opt">
+    <input type="checkbox" id="reduceMotion">
+    <span>Reduce motion</span>
+  </label>
+  <button id="enter" class="btn-primary" type="button">Enter</button>
+  <p class="note">Sound on. Best on a phone held upright.</p>
+  <details class="credits">
+    <summary>Credits</summary>
+    <ul>
+      <li>Developer: neelafarz (GitHub)</li>
+      <li>Scene artwork: supplied by the Developer (source and licence to be recorded)</li>
+      <li>Sound effects: original, synthesized in code for this project</li>
+      <li>Ambient bed "Loopable Dungeon Ambience" by JaggedStone, <a href="https://opengameart.org/content/loopable-dungeon-ambience">CC0</a></li>
+      <li>Wind layer "Wind whoosh loop" by SketchMan3, <a href="https://opengameart.org/content/wind-whoosh-loop">CC0</a></li>
+    </ul>
+  </details>
+</section>
+
+<main id="stage" class="stage" hidden aria-label="Haunted hollow scene">
+  <!-- Layer 1: static background art -->
+  <img class="bg" src="assets/img/scene.png" alt="" width="853" height="1844" decoding="async">
+  <div class="fx house-glow" aria-hidden="true"></div>
+
+  <!-- Layer 2: ambient effects (decorative) -->
+  <div class="fx fog fog-a" aria-hidden="true"></div>
+  <div class="fx fog fog-b" aria-hidden="true"></div>
+  <div class="fx" id="ambientBats" aria-hidden="true"></div>
+  <div class="fx" id="leaves" aria-hidden="true"></div>
+  <div class="fx" id="burst" aria-hidden="true"></div>
+
+  <!-- Layer 3: interactive hotspots -->
+  <button class="hotspot decoy door" id="door" type="button" aria-label="Haunted house door"></button>
+  <button class="hotspot decoy tomb" id="tomb1" type="button" aria-label="Left gravestone" style="left:19%;top:57.5%"></button>
+  <button class="hotspot decoy tomb" id="tomb2" type="button" aria-label="Right gravestone" style="left:84%;top:59.5%"></button>
+  <button class="hotspot pumpkin" id="p0" data-i="0" type="button" aria-label="Small pumpkin" style="left:94%;top:88.4%;--s:12"></button>
+  <button class="hotspot pumpkin" id="p1" data-i="1" type="button" aria-label="Medium pumpkin" style="left:37.5%;top:83.2%;--s:15"></button>
+  <button class="hotspot pumpkin" id="p2" data-i="2" type="button" aria-label="Large pumpkin" style="left:22.9%;top:94.6%;--s:22"></button>
+
+  <!-- Layer 4: interface -->
+  <div class="hud">
+    <div class="pips" id="pips" role="img" aria-label="Story progress 0 of 3"><i></i><i></i><i></i></div>
+    <button id="pause" class="pause" type="button" aria-label="Pause" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><g class="ic-pause"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></g><polygon class="ic-play" points="7,5 19,12 7,19"/></svg>
+    </button>
+  </div>
+  <p class="hint" id="hint" role="status" aria-live="polite"></p>
+  <p class="toast" id="toast" role="status" aria-live="polite"></p>
+  <div class="paused-badge" aria-hidden="true">Paused</div>
+  <div class="flash" id="flash" aria-hidden="true"></div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
