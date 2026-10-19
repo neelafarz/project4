@@ -52,6 +52,11 @@ Test each result before continuing, including related behavior that already work
 - **Changes:** verified the clip's licence (CC0), trimmed it, and wired it to Dracula's entrance (synth waltz kept as fallback); statue glow, progress dots and rings are now red; credits updated.
 - **Verified (headless Chromium, screenshot reviewed):** the 6 s clip starts ~2.8 s after the eye tap (the entrance); red statues match the castle palette; payoff ends and resets; zero console errors. **Not verified:** how the music sounds and blends with the thunder/door/laugh (Developer to listen); whether the laugh at the end clashes with the fade-out.
 
+### Revision 5 (Developer's request for more life in the scene)
+- **Observed (Developer):** wanted falling leaves or something from the trees, a bat or two flying out of the trees, a spider crawling across the path near the gargoyles, lightning flashes behind the castle, and light rain or distant thunder, with sounds of my own.
+- **Changes:** all added as decoration layers (see `spec.md` ambient effects). First spider was dark on a dark path and almost invisible in my screenshot, so it is larger with a pale rim.
+- **Verified (headless Chromium, screenshots reviewed):** 34 rain drops and 11 leaves built; ambient lightning fires by itself ~11 s in and brightens the sky with the castle in silhouette; bat and spider visible when their cycles are advanced; Pause freezes leaves, rain and spider; reduced motion hides them; story still passes (order, decoys, payoff, replay); zero console errors. **Not verified:** how the rain and thunder sound or how loud they are against the music (Developer to listen); whether the flashes feel too frequent or too bright on a phone.
+
 ### Developer must verify on a physical phone
 1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
 2. Tap targets: all six statues and the four eye pairs are comfortable to hit (the small right-side pairs have a 48 px target); wrong statues grumble.

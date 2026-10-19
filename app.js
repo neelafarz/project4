@@ -36,11 +36,21 @@
       this.master.gain.value = 0;
       this.master.connect(this.ctx.destination);
       this.master.gain.linearRampToValueAtTime(0.9, this.ctx.currentTime + 2);
+      this.startRain();
       // Ambient layers load in the background; the scene works without them if they fail.
       this.load('assets/audio/dungeon_ambient_1.mp3').then((b) => b && this.loop(b, 0.55));
       this.load('assets/audio/wind_whoosh_loop.mp3').then((b) => b && this.loop(b, 0.22));
       this.load('assets/audio/owl_hoot.mp3').then((b) => { this.owlBuf = b; });
       this.load('assets/audio/toccata_intro.mp3').then((b) => { this.toccataBuf = b; });
+    },
+    // light rain: looped noise through a band-pass, mixed low under the other ambience
+    startRain() {
+      const n = this.ctx.sampleRate * 3, buf = this.ctx.createBuffer(1, n, this.ctx.sampleRate), d = buf.getChannelData(0);
+      let last = 0; for (let i = 0; i < n; i++) { const w = Math.random() * 2 - 1; last = 0.7 * last + 0.3 * w; d[i] = last * 2.2; }   // softened noise
+      const src = this.ctx.createBufferSource(), hp = this.ctx.createBiquadFilter(), lp = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
+      src.buffer = buf; src.loop = true; hp.type = 'highpass'; hp.frequency.value = 1400; lp.type = 'lowpass'; lp.frequency.value = 7000;
+      g.gain.setValueAtTime(0.0001, this.ctx.currentTime); g.gain.linearRampToValueAtTime(0.07, this.ctx.currentTime + 4);
+      src.connect(hp).connect(lp).connect(g).connect(this.master); src.start();
     },
     async load(url) {
       try { return await this.ctx.decodeAudioData(await (await fetch(url)).arrayBuffer()); }
@@ -98,6 +108,8 @@
       [[['D3', 'F3', 'A3'], 0], [['A3', 'C4s', 'E4'], 3], [['D3', 'F3', 'A3'], 6]].forEach(([ch, b]) => [1, 2].forEach((k) =>
         ch.forEach((n) => audio.tone(N[n], 0.28, 'square', 0.03, (b + k) * B))));                                              // plucked off-beats
     },
+    // distant thunder: slow, low rumble that swells and fades (quiet, far away)
+    farThunder() { audio.noise(4, 0.16, 280, 50, 0, 'lowpass'); audio.tone(48, 3.2, 'sine', 0.12, 0.2, 34); },
     organ() { [131, 156, 196, 262].forEach((f) => { audio.tone(f, 2.6, 'triangle', 0.1); audio.tone(f * 2, 2.6, 'sine', 0.04); }); },
     bats() { audio.noise(1.6, 0.16, 900, 3200); audio.noise(1.2, 0.1, 2500, 800, 0.4, 'highpass'); },
     laugh() { [200, 170, 200, 160, 190].forEach((f, i) => audio.tone(f, 0.16, 'square', 0.08, i * 0.2, f * 0.8)); },
@@ -116,6 +128,24 @@
       if (story.mode === 'idle') sfx.owl();
       scheduleOwl();
     });
+  }
+
+  /* ambient lightning: random 9–20 s gaps on the shared clock; the thunder arrives 0.7–2.2 s later, far away */
+  function scheduleLightning(first = false) {
+    clock.after(first ? 11000 : 9000 + Math.random() * 11000, () => {
+      if (story.mode === 'idle') {
+        const l = $('lightning'), bolt = $('bolt');
+        bolt.style.left = `${6 + Math.random() * 16}%`;
+        l.classList.remove('on'); void l.offsetWidth; l.classList.add('on'); clock.after(900, () => l.classList.remove('on'));
+        clock.after(700 + Math.random() * 1500, () => sfx.farThunder());
+      }
+      scheduleLightning();
+    });
+  }
+  /* light rain streaks (decorative) */
+  function buildRain() {
+    $('rain').innerHTML = Array.from({ length: 34 }, (_, i) =>
+      `<span class="drop" style="--x:${(i * 29 + 7) % 104}%;--t:${0.9 + (i % 5) * 0.14}s;--d:${-((i * 37) % 17) / 10}s"></span>`).join('');
   }
 
   /* ---------- progressive hints: by idle time since the player last interacted, per story phase ---------- */
@@ -218,6 +248,13 @@
     },
   };
 
+  /* ---------- ambient leaves: generated once on Enter, falling from the tree canopy (decorative) ---------- */
+  function buildLeaves() {
+    const colors = ['#6b3a2e', '#8a4b2f', '#3a4a70', '#5a3a52', '#7a5a2a'];
+    $('leaves').innerHTML = Array.from({ length: 11 }, (_, i) =>
+      `<span class="leaf" style="--x:${(i * 9 + 3 + (i % 3) * 2) % 94}%;--y0:${30 + (i % 4) * 4}%;--t:${13 + (i % 5) * 2}s;--d:${-i * 1.9}s;--c:${colors[i % 5]}"></span>`).join('');
+  }
+
   /* ---------- global Play/Pause: audio, CSS animation, shared timers and interaction together ---------- */
   function setPaused(paused) {
     clock.running = !paused; clock.last = performance.now();
@@ -232,9 +269,9 @@
   $('reduceMotion').checked = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('enter').addEventListener('click', async () => {
     document.documentElement.dataset.motion = $('reduceMotion').checked ? 'reduced' : 'full';
-    $('start').hidden = true; stage.hidden = false;
+    $('start').hidden = true; stage.hidden = false; buildLeaves(); buildRain();
     await audio.init();
-    hints.reset(); scheduleOwl(true);
+    hints.reset(); scheduleOwl(true); scheduleLightning(true);
     $('pause').focus({ preventScroll: true });
     requestAnimationFrame((n) => { clock.last = n; clock.tick(n); });
   });
