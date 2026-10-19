@@ -27,7 +27,7 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
 
 ### Phase 1 contract (castle concept; provisional until Developer approves)
 - **Scene:** three stacked 852×1846 layers (background castle → forest → gargoyles), unaltered; the stage keeps that aspect and is letterboxed on other phones. Features: castle (focal point), forest, gargoyle statues. Style: Scooby-Doo-style mystery, ages 10+, no gore.
-- **Ambient effects:** drifting mist, flickering red castle windows, cloud shadows passing over the moon, two bats that sweep out of the trees every ~26 s and ~34 s, a solid-black eight-legged spider with glowing red eyes crawling across the path near the gargoyles (~every 40 s), and lightning flashes behind the castle every 9–20 s (sky and clouds light up while the castle stays in silhouette, plus an occasional bolt to the left). Decoration only; they sit between the forest and gargoyle layers. Reduced motion hides the bats, spider and lightning. Sound: CC0 dungeon bed + wind, distant synthesized thunder 0.7–2.2 s after each ambient flash (quiet), and the occasional owl hoot. No rain and no leaves (both removed at the Developer's request).
+- **Ambient effects:** drifting mist, flickering red castle windows, cloud shadows passing over the moon, two bats that sweep out of the trees every ~26 s and ~34 s, a dark-blue eight-legged spider with glowing red eyes crawling across the path near the gargoyles (~every 40 s), and lightning flashes behind the castle every 9–20 s (sky and clouds light up while the castle stays in silhouette, plus an occasional bolt to the left). Decoration only; they sit between the forest and gargoyle layers. Reduced motion hides the bats, spider and lightning. Sound: CC0 dungeon bed + wind, distant synthesized thunder 0.7–2.2 s after each ambient flash (quiet), and the occasional owl hoot. No rain and no leaves (both removed at the Developer's request).
 - **Start screen:** Reduce-motion checkbox (preset from device setting) + Enter, which unlocks audio and applies the motion choice.
 - **Play/Pause:** one 48px button (or `P`) freezes audio, CSS animation, shared timers and scene interaction; also auto-pauses when the tab is hidden.
 - **Story 1, "The Count Awakens" (~8 s payoff):**
@@ -41,7 +41,9 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
 
 ## Scope and revisions
 
-**Revision log:** 2026-10-19 (Revision 7): the four progress dots (top left) are blue, including the fourth, instead of red.
+**Revision log:** 2026-10-19 (Revision 8): trees no longer cover the road in the middle-left stretch (derived forest layer); spider changed from black to dark blue.
+
+**Earlier:** 2026-10-19 (Revision 7): the four progress dots (top left) are blue, including the fourth, instead of red.
 
 **Earlier:** 2026-10-19 (Revision 6): rain and leaves removed; statue activation changed from a silhouette glow to red glowing eyes on dormant statues; spider redrawn solid black, eight legs, glowing red eyes. Thunder and lightning kept.
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a1030">
 <title>Virtual Hallo-weenie</title>
-<link rel="stylesheet" href="style.css?v=14">
+<link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
 
@@ -48,18 +48,19 @@
   <div class="fx mist mist-a" aria-hidden="true"></div>
   <div class="fx mist mist-b" aria-hidden="true"></div>
   <div class="fx" id="bats" aria-hidden="true"></div>
-  <img class="layer" src="assets/img/castle_forest.png" alt="" width="852" height="1846" decoding="async">
+  <img class="layer" src="assets/img/castle_forest_clear.png?v=15" alt="" width="852" height="1846" decoding="async">
   <!-- Ambient wildlife between the forest and the gargoyles: bats out of the trees, a crawling spider -->
   <div class="fx" id="treebats" aria-hidden="true">
     <div class="tbat tbat-a"><svg viewBox="0 0 40 22"><path d="M20 20 L16 9 L11 12 L0 2 Q8 12 6 18 Q12 14 16 20 Q18 17 20 20 Q22 17 24 20 Q28 14 34 18 Q32 12 40 2 L29 12 L24 9Z"/></svg></div>
     <div class="tbat tbat-b"><svg viewBox="0 0 40 22"><path d="M20 20 L16 9 L11 12 L0 2 Q8 12 6 18 Q12 14 16 20 Q18 17 20 20 Q22 17 24 20 Q28 14 34 18 Q32 12 40 2 L29 12 L24 9Z"/></svg></div>
   </div>
   <div class="fx" aria-hidden="true"><div class="spider"><svg viewBox="0 0 60 40">
+    <defs><radialGradient id="spiderBody" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="#1a2b63"/><stop offset="1" stop-color="#060c22"/></radialGradient></defs>
     <g class="legs legs-a"><path d="M30 17 L38 5 L48 9 M28 27 L36 37 L46 35 M21 17 L14 5 L6 9 M19 27 L11 37 L3 35"/></g>
     <g class="legs legs-b"><path d="M32 19 L42 10 L53 15 M30 29 L40 39 L51 39 M23 16 L18 3 L8 5 M21 28 L13 38 L5 39"/></g>
     <ellipse cx="26" cy="22" rx="13" ry="9" class="sbody"/><circle cx="42" cy="21" r="6" class="sbody"/>
     <circle cx="45" cy="19" r="1.7" class="seye2"/><circle cx="45" cy="23" r="1.7" class="seye2"/></svg></div></div>
-  <img class="layer" src="assets/img/castle_gargoyles_dormant.png?v=14" alt="" width="852" height="1846" decoding="async">
+  <img class="layer" src="assets/img/castle_gargoyles_dormant.png?v=15" alt="" width="852" height="1846" decoding="async">
 
   <!-- Statue eyes: dark until a statue is activated, then they glow red -->
   <i class="seye" id="se0" aria-hidden="true" style="left:19.84%;top:58.94%;--w:1.8"></i>
@@ -96,6 +97,6 @@
   <div class="flash" id="flash" aria-hidden="true"></div>
 </main>
 
-<script src="app.js?v=14"></script>
+<script src="app.js?v=15"></script>
 </body>
 </html>

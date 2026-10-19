@@ -65,6 +65,11 @@ Test each result before continuing, including related behavior that already work
 ### Revision 7
 - **Observed (Developer):** wanted the progress lights in the top left to be blue. **Change:** all four dots use blue (`#5aa8ff`); the red fourth dot is gone. **Verified:** screenshot of the HUD after the full order and the correct eyes shows four lit blue dots; no console errors.
 
+### Revision 8
+- **Observed (Developer):** the trees in the middle-left covered the path; the spider was too black and should be dark bluish.
+- **Changes:** derived forest layer with the middle-left road cleared (see `research.md`); spider body is now a dark navy gradient with a navy outline and still has red glowing eyes.
+- **Verified (headless Chromium, before/after previews and screenshots reviewed):** the road is unobstructed in the middle-left; the spider is dark blue with eight legs and red eyes; the full story regression still passes; zero console errors. **Not verified:** whether the Developer also wants the upper road section (bushes at y ~700–880) cleared.
+
 ### Developer must verify on a physical phone
 1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
 2. Tap targets: all six statues and the four eye pairs are comfortable to hit (the small right-side pairs have a 48 px target); wrong statues grumble.
