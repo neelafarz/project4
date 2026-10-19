@@ -1,15 +1,17 @@
 /* Virtual Hallo-weenie — layout model:
-   --u is 1% of the stage width. The stage is a 9:16 box (360x640 art space) centred in the viewport,
-   so every size below is expressed in u and scales with the phone. */
+   --u is 1% of the stage width. The stage matches the scene art's aspect (852x1846 = 100u x 216.67u),
+   centred in the viewport, so every size below is in u and scales with the phone.
+   Hotspots are positioned by --x/--y (percent of the stage) and sized by --w/--h (in u). */
 :root {
-  --u: min(1vw, 0.4625dvh); /* stage is 100u x 216.2u, the scene image aspect (853x1844) */
-  --ink: #fff8e8;
-  --amber: #ffb347;
-  --panel: rgba(12, 6, 28, .82);
+  --u: min(1vw, 0.4615dvh);
+  --ink: #f4f6ff;
+  --accent: #ff5a4a;      /* castle red */
+  --ghost: #5dff9a;       /* eerie green glow for lit statues */
+  --panel: rgba(8, 10, 32, .85);
   font-size: 16px;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; height: 100%; background: #1a0f33; color: var(--ink);
+html, body { margin: 0; height: 100%; background: #070a1e; color: var(--ink);
   font-family: "Trebuchet MS", system-ui, sans-serif; overflow: hidden; touch-action: manipulation; }
 [hidden] { display: none !important; }
 button { font: inherit; color: inherit; }
@@ -17,114 +19,126 @@ button { font: inherit; color: inherit; }
 
 /* ---------- start screen ---------- */
 .start { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 18px; padding: 24px; text-align: center; background: radial-gradient(circle at 50% 30%, #3a1a6e, #0d0821 70%); }
-.start h1 { margin: 0; font-size: clamp(2.2rem, 11vw, 3.4rem); line-height: 1.05; color: var(--amber);
-  text-shadow: 0 0 18px rgba(255, 140, 0, .6); letter-spacing: .02em; }
-.start h1 span { color: #c9a6ff; text-shadow: 0 0 18px rgba(160, 90, 255, .7); }
+  gap: 18px; padding: 24px; text-align: center; background: radial-gradient(circle at 50% 30%, #1d2c66, #070a1e 70%); }
+.start h1 { margin: 0; font-size: clamp(2.2rem, 11vw, 3.4rem); line-height: 1.05; color: #ff7a6a;
+  text-shadow: 0 0 18px rgba(255, 60, 40, .6); letter-spacing: .02em; }
+.start h1 span { color: #9fc0ff; text-shadow: 0 0 18px rgba(90, 140, 255, .7); }
 .tagline { margin: 0; font-size: 1.1rem; line-height: 1.5; max-width: 22em; }
-.note { margin: 0; font-size: .95rem; color: #d9cdf2; }
+.note { margin: 0; font-size: .95rem; color: #c3cdf0; }
 .motion-opt { display: flex; align-items: center; gap: 12px; min-height: 48px; font-size: 1.05rem; cursor: pointer; }
-.motion-opt input { width: 26px; height: 26px; accent-color: var(--amber); }
+.motion-opt input { width: 26px; height: 26px; accent-color: var(--accent); }
 .btn-primary { min-width: 200px; min-height: 56px; padding: 0 32px; font-size: 1.3rem; font-weight: 700; border: 0; border-radius: 30px;
-  background: linear-gradient(#ffb347, #e8731a); color: #2a1000; cursor: pointer; box-shadow: 0 6px 24px rgba(255, 140, 0, .45); }
+  background: linear-gradient(#ff6a55, #b8231a); color: #fff; cursor: pointer; box-shadow: 0 6px 24px rgba(255, 60, 40, .45); }
 .btn-primary:active { transform: scale(.97); }
 .credits { font-size: .9rem; max-width: 24em; }
 .credits summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; justify-content: center; }
 .credits ul { text-align: left; margin: 0; padding-left: 1.2em; line-height: 1.5; }
-.credits a { color: #ffd9a0; }
+.credits a { color: #ffb4a8; }
 
 /* ---------- stage ---------- */
-.stage { position: absolute; top: 50%; left: 50%; width: calc(var(--u) * 100); height: calc(var(--u) * 216.2);
-  transform: translate(-50%, -50%); overflow: hidden; overflow: clip; background: #0d0821; }
+.stage { position: absolute; top: 50%; left: 50%; width: calc(var(--u) * 100); height: calc(var(--u) * 216.67);
+  transform: translate(-50%, -50%); overflow: hidden; overflow: clip; background: #070a1e; }
 .stage > * { position: absolute; }
-.bg { inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-drag: none; }
+.layer { inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-drag: none; pointer-events: none; }
 .fx { inset: 0; pointer-events: none; overflow: hidden; overflow: clip; }
 
-/* fog: two wide gradient bands drifting sideways */
-.fog { left: -50%; width: 200%; height: calc(var(--u) * 40); background:
-  radial-gradient(ellipse at 20% 50%, rgba(200, 190, 230, .32), transparent 55%),
-  radial-gradient(ellipse at 65% 50%, rgba(200, 190, 230, .26), transparent 55%); }
-.fog-a { top: 40%; inset: auto; top: 40%; left: -50%; opacity: .6; animation: fogDrift 38s linear infinite alternate; }
-.fog-b { top: 62%; left: -60%; opacity: .5; animation: fogDrift 55s linear infinite alternate-reverse; }
-@keyframes fogDrift { to { transform: translateX(25%); } }
+/* ambient 1: drifting mist (two bands, behind the forest) */
+.mist { left: -50%; width: 200%; height: calc(var(--u) * 45);
+  background: radial-gradient(ellipse at 22% 50%, rgba(150, 175, 255, .28), transparent 55%),
+              radial-gradient(ellipse at 68% 50%, rgba(150, 175, 255, .22), transparent 55%); }
+.mist-a { inset: auto; top: 33%; left: -50%; animation: mistDrift 40s linear infinite alternate; }
+.mist-b { inset: auto; top: 56%; left: -60%; opacity: .8; animation: mistDrift 58s linear infinite alternate-reverse; }
+@keyframes mistDrift { to { transform: translateX(25%); } }
 
+/* ambient 2: flickering red castle windows (overlay only; the art is untouched) */
+.castle-glow { mix-blend-mode: screen; opacity: .45; animation: flicker 3.3s infinite;
+  background:
+    radial-gradient(circle at 60% 11%, rgba(255, 70, 50, .55), transparent 9%),
+    radial-gradient(circle at 60% 24%, rgba(255, 70, 50, .5), transparent 9%),
+    radial-gradient(circle at 34% 17%, rgba(255, 70, 50, .35), transparent 7%),
+    radial-gradient(circle at 78% 17%, rgba(255, 70, 50, .35), transparent 7%); }
+@keyframes flicker { 0%, 100% { opacity: .5; } 8% { opacity: .25; } 12% { opacity: .55; } 40% { opacity: .45; } 44% { opacity: .2; } 48% { opacity: .55; } 75% { opacity: .35; } }
 
-/* house glow: flickers constantly, flares during the story (overlay only; the scene image is untouched) */
-.house-glow { left: 33%; top: 18%; right: auto; bottom: auto; width: 40%; height: 18%; border-radius: 50%; mix-blend-mode: screen;
-  background: radial-gradient(ellipse, rgba(255, 150, 40, .55), transparent 70%); opacity: .35; animation: flicker 3.1s infinite; }
-@keyframes flicker { 0%, 100% { opacity: .35; } 8% { opacity: .15; } 12% { opacity: .4; } 40% { opacity: .3; } 44% { opacity: .1; } 48% { opacity: .38; } 75% { opacity: .25; } }
-.house-flare .house-glow, .house-glow.house-flare { animation: none; opacity: 1; transition: opacity .4s; }
+/* ambient 3: cloud shadows drifting across the moon */
+.moonclouds { inset: auto; left: 55%; top: 2%; width: 45%; height: 14%; }
+.mc { position: absolute; display: block; width: 70%; height: 28%; border-radius: 50%; background: #0a1438; opacity: .65; filter: blur(6px); }
+.mc-a { top: 18%; animation: cloudDrift 46s linear infinite alternate; }
+.mc-b { top: 50%; width: 55%; opacity: .5; animation: cloudDrift 64s linear infinite alternate-reverse; }
+@keyframes cloudDrift { from { transform: translateX(-80%); } to { transform: translateX(150%); } }
 
-/* embers (story only) */
-.ember { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #ffd27a; box-shadow: 0 0 8px 3px #ff9a30; animation: ember 2.6s ease-out forwards; }
-@keyframes ember { to { transform: translate(var(--dx), calc(var(--u) * -30)); opacity: 0; } }
-
-/* leaves */
-.leaf { position: absolute; top: -6%; left: var(--x); width: calc(var(--u) * 3.2); height: calc(var(--u) * 3.2);
-  background: var(--c); border-radius: 0 100% 0 100%; animation: leafFall var(--t) linear infinite; animation-delay: var(--d); }
-@keyframes leafFall { 0% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(calc(var(--u) * 8), calc(var(--u) * 45)) rotate(120deg); }
-  50% { transform: translate(calc(var(--u) * -6), calc(var(--u) * 90)) rotate(240deg); } 75% { transform: translate(calc(var(--u) * 7), calc(var(--u) * 135)) rotate(330deg); }
-  100% { transform: translate(0, calc(var(--u) * 190)) rotate(420deg); } }
+/* story: door flare, lightning, bats */
+.door-flare { inset: auto; left: 38%; top: 14%; width: 44%; height: 20%; mix-blend-mode: screen; opacity: 0; transition: opacity .4s;
+  background: radial-gradient(closest-side at 50% 62%, rgba(255, 80, 50, .85), rgba(255, 80, 50, .35) 45%, transparent); }
+.flare .door-flare { opacity: 1; }
+.flash { inset: 0; pointer-events: none; background: rgba(200, 220, 255, .75); opacity: 0; }
+.flash.on { animation: lightning .5s ease-out; }
+@keyframes lightning { 0% { opacity: .9; } 20% { opacity: .1; } 35% { opacity: .7; } 100% { opacity: 0; } }
+.bat { position: absolute; left: 58%; top: 14%; width: calc(var(--u) * 10); height: calc(var(--u) * 5.5); animation: batBurst 2.8s ease-out forwards; }
+.bat svg { width: 100%; height: 100%; fill: #05071a; }
+@keyframes batBurst { to { transform: translate(calc(var(--u) * var(--dx)), calc(var(--u) * var(--dy))) scale(1.7); opacity: 0; } }
 
 /* ---------- hotspots ---------- */
-.hotspot { transform: translate(-50%, -50%); border: 0; background: none; padding: 0; cursor: pointer; }
-.hotspot:disabled { cursor: default; }
-.pumpkin { width: calc(var(--u) * var(--s)); height: calc(var(--u) * var(--s) * .9); min-width: 48px; min-height: 48px; }
-.pumpkin svg { width: 100%; height: 100%; overflow: visible; transition: filter .3s; filter: drop-shadow(0 4px 3px rgba(0, 0, 0, .6)); }
-.pumpkin .face { opacity: 0; transition: opacity .3s; }
-.pumpkin.lit .face { opacity: 1; }
-.pumpkin.lit svg { filter: drop-shadow(0 0 calc(var(--glow, 1) * 10px) #ffb000) drop-shadow(0 0 calc(var(--glow, 1) * 22px) #ff6a00); }
-.pumpkin.pop { animation: pop .45s ease-out; }
-@keyframes pop { 40% { transform: translate(-50%, -50%) scale(1.22); } }
-.pumpkin.wrong { animation: shake .4s; }
-@keyframes shake { 20%, 60% { transform: translate(calc(-50% - 5px), -50%); } 40%, 80% { transform: translate(calc(-50% + 5px), -50%); } }
-
-.door { left: 53.9%; top: 30.6%; width: calc(var(--u) * 12); height: calc(var(--u) * 14); min-width: 44px; min-height: 44px; }
-.tomb { width: calc(var(--u) * 14); height: calc(var(--u) * 16); min-width: 44px; min-height: 44px; }
-.wisp { position: absolute; width: calc(var(--u) * 8); height: calc(var(--u) * 10); border-radius: 50% 50% 40% 40%;
-  background: radial-gradient(circle at 40% 35%, #fff, rgba(190, 220, 255, .6) 60%, transparent 72%); animation: wisp 1.6s ease-out forwards; pointer-events: none; }
-@keyframes wisp { to { transform: translateY(calc(var(--u) * -30)) scale(1.3); opacity: 0; } }
-.ring { position: absolute; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--c, #ffb347); animation: ring .7s ease-out forwards; pointer-events: none; }
-@keyframes ring { from { transform: translate(-50%, -50%) scale(1); opacity: 1; } to { transform: translate(-50%, -50%) scale(5); opacity: 0; } }
-
+.hotspot { transform: translate(-50%, -50%); border: 0; background: none; padding: 0; cursor: pointer; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); }
 .story .hotspot, .paused .hotspot { pointer-events: none; }
 
-/* smoke puffs at story end */
-.smoke { position: absolute; width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(210, 205, 225, .85), rgba(160, 150, 190, 0) 70%); animation: smoke 1.8s ease-out forwards; }
-@keyframes smoke { to { transform: translate(-50%, calc(-50% - var(--u) * 22)) scale(2.4); opacity: 0; } }
+/* gargoyle statues: a copy of the gargoyle layer, clipped to the statue, brightened and tinted green on light-up */
+.garg { width: calc(var(--u) * var(--w)); height: calc(var(--u) * var(--h)); min-width: 48px; min-height: 48px; }
+.garg .clip { position: absolute; inset: 0; overflow: hidden; border-radius: 45%; pointer-events: none; }
+.garg .litimg { position: absolute; width: calc(var(--u) * 100); height: calc(var(--u) * 216.67);
+  left: calc(var(--u) * (var(--w) / 2 - var(--x))); top: calc(var(--u) * (var(--h) / 2 - var(--y) * 2.1667));
+  background: url(assets/img/castle_gargoyles.png) 0 0 / 100% 100%; opacity: 0; transition: opacity .3s;
+  filter: brightness(2.1) sepia(1) hue-rotate(65deg) saturate(3.2); }
+.garg .glow { position: absolute; inset: -25%; border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity .4s; mix-blend-mode: screen;
+  background: radial-gradient(circle, rgba(93, 255, 154, .6), transparent 65%); }
+.garg.lit .litimg { opacity: .9; }
+.garg.lit .glow { opacity: 1; }
+.garg.pop { animation: pop .4s ease-out; }
+@keyframes pop { 40% { transform: translate(-50%, -50%) scale(1.1); } }
+.garg.grumble { animation: grumble .4s; }
+@keyframes grumble { 20%, 60% { transform: translate(calc(-50% - 3px), -50%); } 40%, 80% { transform: translate(calc(-50% + 3px), -50%); } }
+.story .garg.lit .glow { animation: surge .7s ease-in-out infinite alternate; }
+@keyframes surge { from { opacity: .6; } to { opacity: 1; transform: scale(1.25); } }
+
+/* forest eyes: appear after three statues are lit */
+.eyes { width: calc(var(--u) * 24); height: calc(var(--u) * 12); min-width: 72px; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 6); animation: eyesIn .8s ease-out; }
+.eyes i { display: block; width: calc(var(--u) * 6); height: calc(var(--u) * 2.6); border-radius: 80% 20% 80% 20% / 100% 100% 0 0; background: radial-gradient(ellipse at 50% 60%, #ffe9e4 6%, #ff3a2a 40%, #b00808 100%);
+  box-shadow: 0 0 6px 2px rgba(255, 40, 30, .75); transform-origin: center; animation: blink 4s infinite; }
+.eyes i:first-child { transform: rotate(8deg); }
+.eyes i:last-child { transform: scaleX(-1) rotate(8deg); }
+@keyframes eyesIn { from { opacity: 0; } }
+@keyframes blink { 0%, 92%, 100% { opacity: 1; } 95% { opacity: .15; } }
+.ring { position: absolute; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--c, #5dff9a); animation: ring .7s ease-out forwards; pointer-events: none; }
+@keyframes ring { from { transform: translate(-50%, -50%) scale(1); opacity: 1; } to { transform: translate(-50%, -50%) scale(5); opacity: 0; } }
 
 /* ---------- interface ---------- */
 .hud { top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: max(env(safe-area-inset-top), 10px) 12px 0; }
 .pips { display: flex; gap: 10px; padding: 12px 14px; border-radius: 24px; background: var(--panel); }
-.pips i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--amber); transition: background .3s, box-shadow .3s; }
-.pips i.on { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
-.pause { width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(255, 248, 232, .6); background: var(--panel); cursor: pointer; display: grid; place-items: center; opacity: .85; }
+.pips i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ghost); transition: background .3s, box-shadow .3s; }
+.pips i.on { background: var(--ghost); box-shadow: 0 0 10px var(--ghost); }
+.pips i:last-child { border-color: var(--accent); }
+.pips i:last-child.on { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+.pause { width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(244, 246, 255, .6); background: var(--panel); cursor: pointer; display: grid; place-items: center; opacity: .85; }
 .pause svg { width: 24px; height: 24px; fill: var(--ink); }
 .pause .ic-play { display: none; }
 .paused .pause .ic-play { display: block; }
 .paused .pause .ic-pause { display: none; }
 .hint, .toast { left: 6%; right: 6%; margin: 0; padding: 12px 16px; border-radius: 16px; background: var(--panel); color: var(--ink);
   font-size: 1.05rem; line-height: 1.4; text-align: center; opacity: 0; transition: opacity .6s; pointer-events: none; }
-.hint { top: 11%; font-style: italic; }
-.toast { top: 24%; font-weight: 700; color: var(--amber); }
+.hint { top: 8%; font-style: italic; }
+.toast { top: 18%; font-weight: 700; color: #ffb4a8; }
 .hint.show, .toast.show { opacity: 1; }
 .paused-badge { top: 45%; left: 50%; transform: translate(-50%, -50%); padding: 10px 26px; border-radius: 30px; background: var(--panel);
   font-size: 1.4rem; letter-spacing: .15em; text-transform: uppercase; opacity: 0; pointer-events: none; }
 .paused .paused-badge { opacity: 1; }
-.flash { inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 80%, rgba(255, 170, 40, .55), transparent 70%); opacity: 0; transition: opacity .5s; }
-.flash.on { opacity: 1; }
 
 /* pause: freeze every CSS animation; JS pauses audio and the shared timer */
 .paused *, .paused *::before, .paused *::after { animation-play-state: paused !important; }
 
-/* reduced motion: no drifting, falling, flying, shaking or flashing — glow and fades only */
-[data-motion="reduced"] .fog, [data-motion="reduced"] .house-glow,
-[data-motion="reduced"] .pumpkin.pop, [data-motion="reduced"] .pumpkin.wrong { animation: none; }
-[data-motion="reduced"] #leaves, [data-motion="reduced"] .ember,
-[data-motion="reduced"] .wisp { display: none; }
-[data-motion="reduced"] .smoke { animation: smokeFade 1.8s ease-out forwards; }
-@keyframes smokeFade { from { opacity: 1; } to { opacity: 0; } }
-[data-motion="reduced"] .ring { animation: smokeFade .7s forwards; }
-[data-motion="reduced"] .flash { display: none; }
+/* reduced motion: no drifting, flying, shaking, pulsing or flashing — glow and fades only */
+[data-motion="reduced"] .mist, [data-motion="reduced"] .mc, [data-motion="reduced"] .castle-glow,
+[data-motion="reduced"] .garg.pop, [data-motion="reduced"] .garg.grumble, [data-motion="reduced"] .eyes i,
+[data-motion="reduced"] .story .garg.lit .glow { animation: none; }
+[data-motion="reduced"] #bats, [data-motion="reduced"] .flash { display: none; }
+[data-motion="reduced"] .ring { animation: ringFade .7s forwards; }
+@keyframes ringFade { from { opacity: 1; } to { opacity: 0; } }
 [data-motion="reduced"] .hint, [data-motion="reduced"] .toast { transition: none; }

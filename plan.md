@@ -21,16 +21,16 @@ Create your own checklist for the next few results, using the workflow in `brief
 Test each result before continuing, including related behavior that already works. Update priorities as evidence emerges and preserve meaningful working checkpoints in git. Before delivery, verify the deployed app against the brief and specification.
 
 ### Phase 1 checkpoints
-- [x] Read brief and project docs
-- [x] CC0 ambient audio sourced and licences checked
-- [x] Prototype built: `index.html`, `style.css`, `app.js`
-- [x] Art swapped to Developer-supplied image (first SVG art rejected)
-- [x] Headless browser test passes (see `spec.md` acceptance list)
-- [ ] Developer approves spec and art overlay alignment
-- [ ] Deploy to public HTTPS URL (GitHub Pages from `main`)
+- [x] Read brief and project docs; CC0 ambient audio sourced and licences checked
+- [x] First prototype (pumpkin concept) built, deployed and Developer-tested on desktop; tagged `pumpkin-v1`
+- [x] Concept changed to the castle version (Developer decision; see `research.md`)
+- [x] Castle prototype built: three art layers, effects, start screen, Pause, hints, Story 1; headless test passes (see `spec.md`)
+- [ ] Developer provides the Dracula layer; add it to the payoff
+- [ ] Developer approves spec and checks hotspot/glow alignment
+- [ ] Deploy castle version to the public HTTPS URL (GitHub Pages from `main`)
 - [ ] Verify on physical phone (below)
 
-**Main risk:** audio on iOS Safari (autoplay unlock, MP3 loop gap) and overlay alignment of hotspots on real screens.
+**Main risks:** audio on iOS Safari (autoplay unlock, MP3 loop gap); hotspot alignment on real screens; owl clip licence (see `research.md`).
 
 ### Revision 1 (Developer's first look at the live build)
 - Observed (Developer): "idk what I\'m supposed to be doing"; bats "don\'t seem to fit the scene".
@@ -38,13 +38,13 @@ Test each result before continuing, including related behavior that already work
 
 ### Developer must verify on a physical phone
 1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
-2. Tap targets: small pumpkin at far right edge is comfortable to hit; door and gravestones respond.
-3. Glow overlay lines up with the pumpkins and house door.
+2. Tap targets: all six statues and the forest eyes are comfortable to hit; the decoy statues grumble.
+3. Green gargoyle glow lines up with each statue; the forest eyes are easy to see and tap.
 4. Pause freezes sound, motion, and blocks taps; Play resumes. Lock the screen / switch apps: it should auto-pause.
-5. Full story plays ~7.5 s, taps are ignored during it, and it replays.
-6. Reduce motion checkbox (and the phone's Reduce Motion setting) removes leaves/embers/flash.
+5. Full payoff plays ~8 s, taps are ignored during it, and it replays.
+6. Reduce motion checkbox (and the phone's Reduce Motion setting) removes mist/cloud drift, flicker, bats and flashes.
 7. Layout fits without scrolling in portrait; text is readable; no performance stutter.
-8. Hints appear after idle time (5 s / 20 s / 40 s).
+8. Hints appear after idle time (5 s / 20 s / 40 s, then 6 s / 20 s once the eyes phase starts).
 
 
 ## Evidence and revisions
