@@ -27,7 +27,7 @@
 
   /* ---------- audio: CC0 loops + owl clip + synthesized effects (one master gain) ---------- */
   const audio = {
-    ctx: null, master: null, owlBuf: null,
+    ctx: null, master: null, owlBuf: null, toccataBuf: null,
     async init() {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
@@ -40,6 +40,7 @@
       this.load('assets/audio/dungeon_ambient_1.mp3').then((b) => b && this.loop(b, 0.55));
       this.load('assets/audio/wind_whoosh_loop.mp3').then((b) => b && this.loop(b, 0.22));
       this.load('assets/audio/owl_hoot.mp3').then((b) => { this.owlBuf = b; });
+      this.load('assets/audio/toccata_intro.mp3').then((b) => { this.toccataBuf = b; });
     },
     async load(url) {
       try { return await this.ctx.decodeAudioData(await (await fetch(url)).arrayBuffer()); }
@@ -85,7 +86,10 @@
     rise() { audio.tone(60, 1.8, 'sawtooth', 0.12, 0, 220); audio.noise(1.6, 0.08, 300, 2000); },
     thunder() { audio.noise(2.4, 0.4, 600, 60, 0, 'lowpass'); audio.tone(45, 1.8, 'sine', 0.3); },
     door() { audio.tone(190, 1.1, 'sawtooth', 0.12, 0, 80); audio.tone(195, 1.1, 'square', 0.04, 0.02, 85); },
-    // original spooky "Transylvanian" waltz in D harmonic minor: organ drone + harpsichord-style pluck chords + flute-like melody
+    // Dracula's entrance music: first 6 s of Bach's Toccata and Fugue in D minor (Freesound, CC0, see credits);
+    // if it failed to load, an original synthesized waltz plays instead
+    toccata() { if (audio.toccataBuf) audio.playBuffer(audio.toccataBuf, 0.8); else sfx.tune(); },
+    // original spooky "Transylvanian" waltz (fallback) in D harmonic minor: organ drone + harpsichord-style pluck chords + flute-like melody
     tune() {
       const B = 0.5, N = { D2: 73.4, A2: 110, D3: 146.8, F3: 174.6, A3: 220, C4s: 277.2, E4: 329.6, D4: 293.7, F4: 349.2, G4: 392, A4: 440, Bb4: 466.2, C5s: 554.4, D5: 587.3 };
       const mel = [[0, 1, 'A4'], [1, .5, 'Bb4'], [1.5, .5, 'A4'], [2, 1, 'G4'], [3, 1, 'F4'], [4, .5, 'E4'], [4.5, .5, 'F4'], [5, 1, 'D4'], [6, 1, 'A4'], [7, .5, 'Bb4'], [7.5, .5, 'C5s'], [8, 1.5, 'D5']];
@@ -161,11 +165,11 @@
       if (story.mode !== 'idle' || !clock.running) return;
       hints.reset();
       const el = gargs[i];
-      if (lits[i].classList.contains('on')) { sfx.rechime(); ringAt(el, '#5dff9a'); return; }   // already glowing: harmless
+      if (lits[i].classList.contains('on')) { sfx.rechime(); ringAt(el, '#ff5a4a'); return; }   // already glowing: harmless
       if (story.phase === 'statues' && i === ORDER[story.progress]) {
         story.progress++;
         lits[i].classList.add('on', 'pop'); clock.after(500, () => lits[i].classList.remove('pop'));
-        sfx.light(story.progress); ringAt(el, '#5dff9a'); setPips(story.progress);
+        sfx.light(story.progress); ringAt(el, '#ff5a4a'); setPips(story.progress);
         if (story.progress === ORDER.length) {
           story.phase = 'eyes'; hints.reset();
           toast('Something stirs in the dark forest…', 3000);
@@ -189,23 +193,23 @@
     },
     resetStatues() { story.progress = 0; setPips(0); lits.forEach((l) => l.classList.remove('on')); },
     reset() { story.resetStatues(); story.phase = 'statues'; eyeEls.forEach((e) => { e.hidden = true; e.classList.remove('shut'); }); },
-    play() { // ~8.5 s: thunder + door flare → Dracula steps out + creak → waltz theme + bats → laugh → fade → rest
+    play() { // ~8.5 s: thunder + door flare → Dracula steps out + creak → Toccata + bats → laugh → fade → rest
       story.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show');
       document.activeElement && document.activeElement.blur();
       const at = (ms, fn) => clock.after(ms, fn), rm = reduced();
       eyeEls.forEach((e) => { e.hidden = true; }); sfx.rise();
       at(900, () => { stage.classList.add('flare'); sfx.thunder(); flash(); });
       at(1800, () => { sfx.door(); $('dracula').classList.add('show'); $('dracShadow').classList.add('show'); });   // steps out of the door onto the steps
+      at(1900, () => sfx.toccata());
       at(3200, () => {
-        sfx.tune(); sfx.bats();
+        sfx.bats();
         if (!rm) {
           $('bats').innerHTML = [[-30, -45], [-8, -60], [14, -52], [35, -40], [-48, -20], [50, -18], [4, -30]].map(([dx, dy], k) =>
             `<div class="bat" style="--dx:${dx};--dy:${dy};animation-delay:${k * 0.12}s">${batSVG}</div>`).join('');
           at(4000, () => { $('bats').innerHTML = ''; });
         }
       });
-      at(5600, () => { sfx.laugh(); flash(); });
-      at(7000, () => { $('dracula').classList.remove('show'); $('dracShadow').classList.remove('show'); });
+      at(7000, () => { sfx.laugh(); flash(); $('dracula').classList.remove('show'); $('dracShadow').classList.remove('show'); });
       at(7500, () => { stage.classList.remove('flare'); lits.forEach((l) => l.classList.remove('on')); sfx.end(); });
       at(8500, () => {
         story.reset(); story.mode = 'idle'; stage.classList.remove('story'); hints.reset();

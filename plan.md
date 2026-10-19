@@ -47,6 +47,11 @@ Test each result before continuing, including related behavior that already work
 - **Changes:** Dracula animates out of the door and stands on the steps with a ground shadow and a size closer to the door; fifth (decoy) eye pair upper left; payoff extended to ~8.5 s with an original waltz theme. Eye-click sound unchanged until the Developer supplies one.
 - **Verified (headless Chromium, screenshots reviewed):** Dracula small in the doorway at 1–2 s, then standing on the steps; 5 eye pairs shown; melody notes (A4, B♭4, C♯5, D5) scheduled; payoff ends and resets; zero console errors. **Not verified:** how the tune sounds (Developer to listen), Dracula's placement on a real phone.
 
+### Revision 4 (Developer's third test)
+- **Observed (Developer):** wanted the first ~6 s of Toccata and Fugue in D minor (downloaded from Freesound) to play when Dracula comes out; thought the statue glow should be red instead of green.
+- **Changes:** verified the clip's licence (CC0), trimmed it, and wired it to Dracula's entrance (synth waltz kept as fallback); statue glow, progress dots and rings are now red; credits updated.
+- **Verified (headless Chromium, screenshot reviewed):** the 6 s clip starts ~2.8 s after the eye tap (the entrance); red statues match the castle palette; payoff ends and resets; zero console errors. **Not verified:** how the music sounds and blends with the thunder/door/laugh (Developer to listen); whether the laugh at the end clashes with the fade-out.
+
 ### Developer must verify on a physical phone
 1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
 2. Tap targets: all six statues and the four eye pairs are comfortable to hit (the small right-side pairs have a 48 px target); wrong statues grumble.

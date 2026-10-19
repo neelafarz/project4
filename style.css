@@ -6,7 +6,7 @@
   --u: min(1vw, 0.4615dvh);
   --ink: #f4f6ff;
   --accent: #ff5a4a;      /* castle red */
-  --ghost: #5dff9a;       /* eerie green glow for lit statues */
+  --ghost: #ff5a4a;       /* red glow for lit statues and progress dots */
   --panel: rgba(8, 10, 32, .85);
   font-size: 16px;
 }
@@ -94,12 +94,12 @@ button { font: inherit; color: inherit; }
 /* gargoyle statues: invisible tap areas; the light-up is a per-statue image traced to the statue's silhouette, with a soft green rim */
 .garg { width: calc(var(--u) * var(--w)); height: calc(var(--u) * var(--h)); min-width: 48px; min-height: 48px; }
 .lit { position: absolute; height: auto; pointer-events: none; opacity: 0; transition: opacity .4s;
-  filter: drop-shadow(0 0 calc(var(--u) * .8) rgba(93, 255, 154, .55)); }
+  filter: drop-shadow(0 0 calc(var(--u) * .8) rgba(255, 70, 55, .6)); }
 .lit.on { opacity: 1; }
 .lit.pop { animation: litPop .5s ease-out; }
-@keyframes litPop { 30% { filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(150, 255, 190, .9)) brightness(1.5); } }
+@keyframes litPop { 30% { filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(255, 120, 100, .9)) brightness(1.5); } }
 .story .lit.on { animation: surge .7s ease-in-out infinite alternate; }
-@keyframes surge { from { filter: drop-shadow(0 0 calc(var(--u) * .8) rgba(93, 255, 154, .5)); } to { filter: drop-shadow(0 0 calc(var(--u) * 2.4) rgba(120, 255, 170, .95)) brightness(1.25); } }
+@keyframes surge { from { filter: drop-shadow(0 0 calc(var(--u) * .8) rgba(255, 70, 55, .5)); } to { filter: drop-shadow(0 0 calc(var(--u) * 2.4) rgba(255, 90, 70, .95)) brightness(1.25); } }
 .garg.grumble { animation: grumble .4s; }
 @keyframes grumble { 20%, 60% { transform: translate(calc(-50% - 3px), -50%); } 40%, 80% { transform: translate(calc(-50% + 3px), -50%); } }
 
@@ -112,7 +112,7 @@ button { font: inherit; color: inherit; }
 .eyes i:last-child { transform: scaleX(-1) rotate(8deg); }
 .eyes.shut { animation: none; opacity: .1; transition: opacity .2s; }
 @keyframes eyeCycle { 0%, 100% { opacity: 0; } 12%, 55% { opacity: 1; } 68% { opacity: 0; } }
-.ring { position: absolute; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--c, #5dff9a); animation: ring .7s ease-out forwards; pointer-events: none; }
+.ring { position: absolute; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--c, #ff5a4a); animation: ring .7s ease-out forwards; pointer-events: none; }
 @keyframes ring { from { transform: translate(-50%, -50%) scale(1); opacity: 1; } to { transform: translate(-50%, -50%) scale(5); opacity: 0; } }
 
 /* ---------- interface ---------- */
