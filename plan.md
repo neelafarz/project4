@@ -42,6 +42,11 @@ Test each result before continuing, including related behavior that already work
 - **Changes:** per-statue silhouette glow in a softer green; fixed statue order with reset on a wrong tap; four eye pairs (largest = correct, left; three decoys, right) that fade in/out on separate cycles; eyes smaller; Dracula moved onto the road and enlarged slightly; hints rewritten for the ordered puzzle. See `spec.md` (Story 1) and `research.md` (glow technique).
 - **Verified (headless Chromium 390×844, screenshots reviewed):** wrong first/second tap resets to 0 lit; correct order lights 3 and shows 4 eye pairs; statue taps and decoy eyes give feedback with no progress; correct eyes start the payoff; Pause freezes it; it resets and replays; reduced-motion attribute set; zero console errors. **Not verified:** how the glow edges and eye positions look on a real phone; whether "front-left first" matches what the Developer meant.
 
+### Revision 3 (Developer's second test)
+- **Observed (Developer):** Dracula now too low and looked like he was floating; wanted him to come out of the front door; wanted another set of eyes on the upper left; disliked the sound after tapping the red eyes (wants it creepier, will source it); wanted a spooky Transylvanian tune after Dracula comes out.
+- **Changes:** Dracula animates out of the door and stands on the steps with a ground shadow and a size closer to the door; fifth (decoy) eye pair upper left; payoff extended to ~8.5 s with an original waltz theme. Eye-click sound unchanged until the Developer supplies one.
+- **Verified (headless Chromium, screenshots reviewed):** Dracula small in the doorway at 1–2 s, then standing on the steps; 5 eye pairs shown; melody notes (A4, B♭4, C♯5, D5) scheduled; payoff ends and resets; zero console errors. **Not verified:** how the tune sounds (Developer to listen), Dracula's placement on a real phone.
+
 ### Developer must verify on a physical phone
 1. Sound starts after tapping Enter (iOS: silent switch off, volume up); ambient loops without an obvious gap.
 2. Tap targets: all six statues and the four eye pairs are comfortable to hit (the small right-side pairs have a 48 px target); wrong statues grumble.

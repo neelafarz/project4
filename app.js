@@ -5,7 +5,7 @@
   const $ = (id) => document.getElementById(id);
   const stage = $('stage'), hintEl = $('hint'), toastEl = $('toast');
   const gargs = [0, 1, 2, 3, 4, 5].map((i) => $('g' + i)), lits = [0, 1, 2, 3, 4, 5].map((i) => $('l' + i));
-  const eyeEls = [0, 1, 2, 3].map((i) => $('e' + i)); // e0 = largest pair (the correct one); e1–e3 are decoys
+  const eyeEls = [0, 1, 2, 3, 4].map((i) => $('e' + i)); // e0 = largest pair (the correct one); e1–e4 are decoys
   const reduced = () => document.documentElement.dataset.motion === 'reduced';
 
   /* ---------- shared clock: all timers run on this, so Pause freezes them together ---------- */
@@ -85,6 +85,15 @@
     rise() { audio.tone(60, 1.8, 'sawtooth', 0.12, 0, 220); audio.noise(1.6, 0.08, 300, 2000); },
     thunder() { audio.noise(2.4, 0.4, 600, 60, 0, 'lowpass'); audio.tone(45, 1.8, 'sine', 0.3); },
     door() { audio.tone(190, 1.1, 'sawtooth', 0.12, 0, 80); audio.tone(195, 1.1, 'square', 0.04, 0.02, 85); },
+    // original spooky "Transylvanian" waltz in D harmonic minor: organ drone + harpsichord-style pluck chords + flute-like melody
+    tune() {
+      const B = 0.5, N = { D2: 73.4, A2: 110, D3: 146.8, F3: 174.6, A3: 220, C4s: 277.2, E4: 329.6, D4: 293.7, F4: 349.2, G4: 392, A4: 440, Bb4: 466.2, C5s: 554.4, D5: 587.3 };
+      const mel = [[0, 1, 'A4'], [1, .5, 'Bb4'], [1.5, .5, 'A4'], [2, 1, 'G4'], [3, 1, 'F4'], [4, .5, 'E4'], [4.5, .5, 'F4'], [5, 1, 'D4'], [6, 1, 'A4'], [7, .5, 'Bb4'], [7.5, .5, 'C5s'], [8, 1.5, 'D5']];
+      mel.forEach(([b, d, n]) => { audio.tone(N[n], d * B * 1.1, 'triangle', 0.1, b * B); audio.tone(N[n] * 2, d * B, 'sine', 0.025, b * B); });
+      [['D2', 0], ['A2', 3], ['D2', 6]].forEach(([n, b]) => audio.tone(N[n], 3 * B * 1.05, 'sawtooth', 0.05, b * B));   // organ bass, one per bar
+      [[['D3', 'F3', 'A3'], 0], [['A3', 'C4s', 'E4'], 3], [['D3', 'F3', 'A3'], 6]].forEach(([ch, b]) => [1, 2].forEach((k) =>
+        ch.forEach((n) => audio.tone(N[n], 0.28, 'square', 0.03, (b + k) * B))));                                              // plucked off-beats
+    },
     organ() { [131, 156, 196, 262].forEach((f) => { audio.tone(f, 2.6, 'triangle', 0.1); audio.tone(f * 2, 2.6, 'sine', 0.04); }); },
     bats() { audio.noise(1.6, 0.16, 900, 3200); audio.noise(1.2, 0.1, 2500, 800, 0.4, 'highpass'); },
     laugh() { [200, 170, 200, 160, 190].forEach((f, i) => audio.tone(f, 0.16, 'square', 0.08, i * 0.2, f * 0.8)); },
@@ -180,25 +189,25 @@
     },
     resetStatues() { story.progress = 0; setPips(0); lits.forEach((l) => l.classList.remove('on')); },
     reset() { story.resetStatues(); story.phase = 'statues'; eyeEls.forEach((e) => { e.hidden = true; e.classList.remove('shut'); }); },
-    play() { // ~8 s: thunder + door flare → Dracula on the road + creak → organ + bats → laugh → fade → rest
+    play() { // ~8.5 s: thunder + door flare → Dracula steps out + creak → waltz theme + bats → laugh → fade → rest
       story.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show');
       document.activeElement && document.activeElement.blur();
       const at = (ms, fn) => clock.after(ms, fn), rm = reduced();
       eyeEls.forEach((e) => { e.hidden = true; }); sfx.rise();
       at(900, () => { stage.classList.add('flare'); sfx.thunder(); flash(); });
-      at(1800, () => { sfx.door(); $('dracula').classList.add('show'); });
-      at(2800, () => {
-        sfx.organ(); sfx.bats();
+      at(1800, () => { sfx.door(); $('dracula').classList.add('show'); $('dracShadow').classList.add('show'); });   // steps out of the door onto the steps
+      at(3200, () => {
+        sfx.tune(); sfx.bats();
         if (!rm) {
           $('bats').innerHTML = [[-30, -45], [-8, -60], [14, -52], [35, -40], [-48, -20], [50, -18], [4, -30]].map(([dx, dy], k) =>
             `<div class="bat" style="--dx:${dx};--dy:${dy};animation-delay:${k * 0.12}s">${batSVG}</div>`).join('');
-          at(3800, () => { $('bats').innerHTML = ''; });
+          at(4000, () => { $('bats').innerHTML = ''; });
         }
       });
-      at(4800, () => { sfx.laugh(); flash(); });
-      at(5600, () => $('dracula').classList.remove('show'));
-      at(6200, () => { stage.classList.remove('flare'); lits.forEach((l) => l.classList.remove('on')); sfx.end(); });
-      at(7200, () => {
+      at(5600, () => { sfx.laugh(); flash(); });
+      at(7000, () => { $('dracula').classList.remove('show'); $('dracShadow').classList.remove('show'); });
+      at(7500, () => { stage.classList.remove('flare'); lits.forEach((l) => l.classList.remove('on')); sfx.end(); });
+      at(8500, () => {
         story.reset(); story.mode = 'idle'; stage.classList.remove('story'); hints.reset();
         toast('The castle falls quiet… for now. Try again?', 3500);
       });

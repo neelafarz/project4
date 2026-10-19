@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a1030">
 <title>Virtual Hallo-weenie</title>
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 
@@ -28,7 +28,7 @@
       <li>Ambient bed "Loopable Dungeon Ambience" by JaggedStone, <a href="https://opengameart.org/content/loopable-dungeon-ambience">CC0</a></li>
       <li>Wind layer "Wind whoosh loop" by SketchMan3, <a href="https://opengameart.org/content/wind-whoosh-loop">CC0</a></li>
       <li>Owl hoot "OwlHoot(clean).wav" by musicmasta1 (a cleaned-up clip from "Owls in the Night" by Npeo), <a href="https://freesound.org/people/musicmasta1/sounds/251937/">Freesound</a>, licensed <a href="https://creativecommons.org/licenses/by-nc/3.0/">CC BY-NC 3.0</a>; converted to MP3</li>
-      <li>Other sound effects: original, synthesized in code for this project</li>
+      <li>Transylvanian-style theme and other sound effects: original, composed and synthesized in code for this project</li>
     </ul>
   </details>
 </section>
@@ -38,6 +38,7 @@
   <img class="layer" src="assets/img/castle_bg.png" alt="" width="852" height="1846" decoding="async">
   <div class="fx castle-glow" aria-hidden="true"></div>
   <div class="fx door-flare" aria-hidden="true"></div>
+  <div class="drac-shadow" id="dracShadow" aria-hidden="true"></div>
   <img class="dracula" id="dracula" src="assets/img/castle_dracula.png" alt="" width="266" height="400" decoding="async" aria-hidden="true">
   <div class="fx moonclouds" aria-hidden="true"><i class="mc mc-a"></i><i class="mc mc-b"></i></div>
   <div class="fx mist mist-a" aria-hidden="true"></div>
@@ -66,6 +67,8 @@
   <button class="hotspot eyes" id="e2" type="button" aria-label="Small pair of glowing red eyes, middle right of the forest" style="--x:71.6;--y:49.0;--s:0.5;--cy:6s;--cd:-3.5s" hidden><i></i><i></i></button>
   <button class="hotspot eyes" id="e3" type="button" aria-label="Small pair of glowing red eyes, lower right of the forest" style="--x:75.1;--y:54.7;--s:0.65;--cy:4.6s;--cd:-2s" hidden><i></i><i></i></button>
 
+  <button class="hotspot eyes" id="e4" type="button" aria-label="Small pair of glowing red eyes, upper left of the forest" style="--x:17.6;--y:39.0;--s:0.7;--cy:5.4s;--cd:-0.5s" hidden><i></i><i></i></button>
+
   <!-- Interface -->
   <div class="hud">
     <div class="pips" id="pips" role="img" aria-label="Story progress 0 of 4"><i></i><i></i><i></i><i></i></div>
@@ -79,6 +82,6 @@
   <div class="flash" id="flash" aria-hidden="true"></div>
 </main>
 
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

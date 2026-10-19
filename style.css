@@ -67,9 +67,13 @@ button { font: inherit; color: inherit; }
 @keyframes cloudDrift { from { transform: translateX(-80%); } to { transform: translateX(150%); } }
 
 /* story: Dracula silhouette steps into the lit doorway (placed lower, on the road below the castle door) */
-.dracula { left: 58.1%; top: 35.6%; height: calc(var(--u) * 17); width: auto; transform: translate(-50%, -100%) scale(.55); transform-origin: 50% 100%;
-  opacity: 0; transition: opacity .6s, transform 1.4s ease-out; pointer-events: none; }
-.dracula.show { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+.dracula { left: 60.2%; top: 29.5%; height: calc(var(--u) * 12.5); width: auto; transform: translate(-50%, -100%) translateY(calc(var(--u) * -4.7)) scale(.5); transform-origin: 50% 100%;
+  opacity: 0; transition: opacity .6s, transform 1.8s ease-out; pointer-events: none; }
+.dracula.show { opacity: 1; transform: translate(-50%, -100%); }
+/* soft ground shadow under his feet so he reads as standing on the steps, not floating */
+.drac-shadow { left: 60.2%; top: 29.5%; width: calc(var(--u) * 11); height: calc(var(--u) * 2); transform: translate(-50%, -55%); border-radius: 50%; opacity: 0;
+  background: radial-gradient(closest-side, rgba(3, 4, 16, .85), transparent); transition: opacity 1.2s; pointer-events: none; }
+.drac-shadow.show { opacity: 1; }
 [data-motion="reduced"] .dracula, [data-motion="reduced"] .dracula.show { transform: translate(-50%, -100%); transition: opacity .6s; }
 
 /* story: door flare, lightning, bats */
