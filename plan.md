@@ -88,6 +88,19 @@ Record non-identifying playtest observations, separating what Users did or said 
 
 Keep implementation progress and verification here. Update `research.md` when evidence changes a decision and `spec.md` when intended behavior changes; link to those updates rather than duplicating them. Record consequential changes, not every small adjustment.
 
+### Peer playtest log (Phase 1)
+
+Source: reported by the Developer after showing the prototype to a peer. The peer session itself is not part of the Agent's transcript, so details marked *Developer to fill in* were not supplied. Peer is not identified.
+
+| # | What the peer said (as reported) | Interpretation (Developer/Agent) | Change made | How it was checked |
+|---|---|---|---|---|
+| 1 | Directions should be explained through on-screen hints so the player understands what is happening. | The first build gave little guidance; the player could not tell there was something to find or what to do. The Developer had the same confusion when first opening the live build. | Start-screen text now states the goal; progressive hints appear by idle time and escalate from a nudge to the full order (statues phase 5 s / 20 s / 40 s, eyes phase 6 s / 20 s); hints reset on interaction. Details in `spec.md` (Story 1, item 4) and Revisions 1–2 below. | Headless browser test confirms the hints appear at the set times and the story completes. **Not yet re-tested with a peer** to confirm the hints now make the goal clear. |
+| 2 | The theme of the game could be better. | The Developer agreed. The Developer had also found the first concept (haunted house, graveyard, pumpkin patch, "tap three pumpkins in order") too close to the example in `brief.md`. | Whole-style change: new castle/forest/gargoyle scene in a Scooby-Doo-style mystery look, new story ("The Count Awakens"), new ambient effects and sound. The first version is kept at git tag `pumpkin-v1`. See `research.md` (concept change) and `spec.md`. | Each stage was checked by the Developer on the live site and by the headless browser test (Revisions 2–8). **Not yet re-tested with a peer** to confirm the new theme lands better. |
+
+*Developer to fill in:* date of the playtest, how many peers took part, whether they played on a phone, and what they did before the suggestions (for example where they got stuck). Keep it non-identifying.
+
+**Next priority from this evidence:** run the same unguided peer test on the castle version and record what peers do before they say anything.
+
 ## Saving transcripts
 
 When directed, save the complete conversation as `transcripts/plan-YYYY-MM-DD_HHMMSS.md` or `transcripts/build-YYYY-MM-DD_HHMMSS.md`, label messages `Developer` and `Agent`, and confirm the path.

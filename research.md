@@ -55,6 +55,8 @@ Developer chose to use the CC BY-NC owl clip after being told it is not CC0/publ
 
 ## Revisions
 
+- **Peer feedback (see `plan.md`, Peer playtest log):** a peer suggested explaining directions through on-screen hints, and said the game's theme could be better; the Developer agreed and changed the whole style to the castle concept (the first concept is kept at git tag `pumpkin-v1`). This reinforces the earlier decision to leave the pumpkin concept, which the Developer had found too close to the brief's example.
+
 Update decisions when new evidence changes the direction, linking to playtest observations in `plan.md` rather than copying them. Keep chosen behavior and asset requirements in `spec.md`. The Developer confirms when the inquiry is sufficient to continue building; exhaustive research is not a prerequisite.
 
 ## Saving the transcript

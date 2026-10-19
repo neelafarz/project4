@@ -41,7 +41,9 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
 
 ## Scope and revisions
 
-**Revision log:** 2026-10-19 (Revision 8): trees no longer cover the road in the middle-left stretch (derived forest layer); spider changed from black to dark blue.
+**Revision log:** 2026-10-19 (peer feedback): on-screen directions are delivered through progressive hints (Story 1, item 4) and the start-screen text; the whole style was changed to the castle theme. Evidence: `plan.md` (Peer playtest log).
+
+**Earlier:** 2026-10-19 (Revision 8): trees no longer cover the road in the middle-left stretch (derived forest layer); spider changed from black to dark blue.
 
 **Earlier:** 2026-10-19 (Revision 7): the four progress dots (top left) are blue, including the fourth, instead of red.
 
