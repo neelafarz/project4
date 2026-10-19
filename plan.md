@@ -44,7 +44,7 @@ Test each result before continuing, including related behavior that already work
 
 ### Revision 3 (Developer's second test)
 - **Observed (Developer):** Dracula now too low and looked like he was floating; wanted him to come out of the front door; wanted another set of eyes on the upper left; disliked the sound after tapping the red eyes (wants it creepier, will source it); wanted a spooky Transylvanian tune after Dracula comes out.
-- **Changes:** Dracula animates out of the door and stands on the steps with a ground shadow and a size closer to the door; fifth (decoy) eye pair upper left; payoff extended to ~8.5 s with an original waltz theme. Eye-click sound unchanged until the Developer supplies one.
+- **Changes:** Dracula animates out of the door and stands on the steps with a ground shadow and a size closer to the door; fifth (decoy) eye pair upper left; payoff extended to ~8.5 s with an original waltz theme. Eye-click sound unchanged (the Developer later decided the current one is fine).
 - **Verified (headless Chromium, screenshots reviewed):** Dracula small in the doorway at 1–2 s, then standing on the steps; 5 eye pairs shown; melody notes (A4, B♭4, C♯5, D5) scheduled; payoff ends and resets; zero console errors. **Not verified:** how the tune sounds (Developer to listen), Dracula's placement on a real phone.
 
 ### Revision 4 (Developer's third test)

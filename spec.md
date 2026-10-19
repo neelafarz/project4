@@ -36,7 +36,6 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
   3. **Payoff (~8.5 s):** rumble → lightning + castle door flare (0.9 s) → door creak and Dracula steps out of the front door onto the steps (1.8 s; starts small in the doorway, grows, soft ground shadow) → **the first 6 s of Bach's Toccata and Fugue in D minor (CC0 Freesound clip) plays as he steps out (1.9 s)**; bat burst (3.2 s) → laugh + second flash and Dracula fades as the music fades out (7.0 s) → glows fade (7.5 s) → rest and toast (8.5 s). All taps are locked meanwhile; then everything resets and it replays. If the clip fails to load, an original synthesized waltz plays instead.
   4. **Hints by idle time, per phase:** statues 5 s ("stone guardians seem to be watching"), 20 s ("they wake in a certain order, start on the left"), 40 s ("left first, then top right, then bottom right"); eyes 6 s, 20 s ("trust the one that glares the biggest"). Reset on any interaction.
 - **Reduced motion:** no mist/cloud drift, window flicker, bats, flashes, shaking or pulsing; glows and fades only.
-- **Pending from the Developer:** a creepier replacement sound for tapping the correct eyes (currently a synthesized growl); to be sourced and license-checked, then swapped in.
 - **Not built yet:** Phase 2 stories 2 and 3. Dracula is one supplied silhouette (`castle_dracula.png`) shown in the door; a window peek is a possible variation.
 - **Acceptance (automated, headless Chromium 390×844):** statue order and reset-on-wrong, eyes appear/hidden states, decoy eyes, payoff lock + reset + replay, Pause freezes the payoff, tap targets ≥48px, reduced-motion attribute, zero console errors. **Not yet verified:** physical phone (see `plan.md`).
 
@@ -46,7 +45,7 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
 
 **Earlier:** 2026-10-19 (Revision 4): statue glow changed from green to deep red; Dracula's entrance music is now the first 6 s of the Toccata (CC0) instead of my synthesized waltz (kept as fallback).
 
-**Earlier:** 2026-10-19 (Revision 3): Dracula steps out of the front door and stands on the steps (was too low); fifth eye pair (decoy, upper left); original Transylvanian-style theme after Dracula appears; replacement eye-click sound pending.
+**Earlier:** 2026-10-19 (Revision 3): Dracula steps out of the front door and stands on the steps (was too low); fifth eye pair (decoy, upper left); original Transylvanian-style theme after Dracula appears; the eye-click sound is staying as the synthesized growl (Developer decided it is fine).
 
 **Earlier:** 2026-10-19 (castle concept, after the Developer's first phone/desktop test): statue trigger changed from "any three" to a fixed order (front-left → top-right → bottom-right); glow changed from a green circle to a silhouette-shaped soft glow; forest eyes made smaller, moved left, supplemented by decoy pairs on the right, and set to fade in and out; Dracula moved down onto the road. Evidence is recorded in `plan.md` (Revision 2).
 
