@@ -27,9 +27,9 @@ Test each result before continuing, including related behavior that already work
 - [x] Castle prototype built: three art layers, effects, start screen, Pause, hints, Story 1; headless test passes (see `spec.md`)
 - [x] Dracula silhouette received and added to the payoff (door)
 - [x] Revision 2 applied after Developer's test (see below)
-- [ ] Developer approves spec and re-checks hotspot/glow alignment
-- [ ] Deploy castle version to the public HTTPS URL (GitHub Pages from `main`)
-- [ ] Verify on physical phone (below)
+- [x] Developer approved Game 1 after testing the live build ("i like it")
+- [x] Deployed to the public HTTPS URL: https://neelafarz.github.io/project4/ (GitHub Pages from `main`)
+- [ ] Verify on physical phone (below): still to be confirmed and recorded by the Developer
 
 **Main risks:** audio on iOS Safari (autoplay unlock, MP3 loop gap); hotspot alignment on real screens; owl clip licence (see `research.md`).
 
