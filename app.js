@@ -1,9 +1,11 @@
-/* Virtual Hallo-weenie — Phase 1 (castle version)
-   Structure: shared clock (pausable timers) → audio engine → hints → Story 1 state machine → controls. */
+/* Virtual Hallo-weenie — castle version
+   Structure: shared clock (pausable timers) → audio engine → hints → Story 1 and Story 2 state machines → scene switching → controls. */
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);
-  const stage = $('stage'), hintEl = $('hint'), toastEl = $('toast');
+  // Two scenes share one clock, audio engine, Pause and HUD style. `stage`, `hintEl` and `toastEl` always point at the visible scene.
+  const stage1 = $('stage'), stage2 = $('stage2');
+  let stage = stage1, hintEl = $('hint'), toastEl = $('toast'), scene = 1;
   const gargs = [0, 1, 2, 3, 4, 5].map((i) => $('g' + i)), seyes = [0, 1, 2, 3, 4, 5].map((i) => $('se' + i)); // statue eyes (glow red when activated)
   const eyeEls = [0, 1, 2, 3, 4].map((i) => $('e' + i)); // e0 = largest pair (the correct one); e1–e4 are decoys
   const reduced = () => document.documentElement.dataset.motion === 'reduced';
@@ -27,7 +29,7 @@
 
   /* ---------- audio: CC0 loops + owl clip + synthesized effects (one master gain) ---------- */
   const audio = {
-    ctx: null, master: null, owlBuf: null, toccataBuf: null,
+    ctx: null, master: null, owlBuf: null, toccataBuf: null, stabBuf: null,
     async init() {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
@@ -41,6 +43,7 @@
       this.load('assets/audio/wind_whoosh_loop.mp3').then((b) => b && this.loop(b, 0.22));
       this.load('assets/audio/owl_hoot.mp3').then((b) => { this.owlBuf = b; });
       this.load('assets/audio/toccata_intro.mp3').then((b) => { this.toccataBuf = b; });
+      this.load('assets/audio/dracula_stab.wav').then((b) => { this.stabBuf = b; });
     },
     async load(url) {
       try { return await this.ctx.decodeAudioData(await (await fetch(url)).arrayBuffer()); }
@@ -73,6 +76,24 @@
       g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       s.connect(f).connect(g).connect(this.master); s.start(t);
     },
+    // quiet rain bed for story 2: looped white noise through a band filter, fading in and out with the scene (synthesized; no licence needed)
+    rainNode: null,
+    startRain() {
+      if (!this.ctx || this.rainNode) return;
+      const sr = this.ctx.sampleRate, buf = this.ctx.createBuffer(1, sr * 3, sr), d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = this.ctx.createBufferSource(), hp = this.ctx.createBiquadFilter(), lp = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
+      src.buffer = buf; src.loop = true; hp.type = 'highpass'; hp.frequency.value = 1200; lp.type = 'lowpass'; lp.frequency.value = 7000;
+      g.gain.value = 0; g.gain.linearRampToValueAtTime(0.045, this.ctx.currentTime + 2.5);
+      src.connect(hp).connect(lp).connect(g).connect(this.master); src.start();
+      this.rainNode = { src, g };
+    },
+    stopRain() {
+      if (!this.rainNode) return;
+      const { src, g } = this.rainNode; this.rainNode = null;
+      g.gain.cancelScheduledValues(this.ctx.currentTime); g.gain.setValueAtTime(g.gain.value, this.ctx.currentTime); g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1);
+      setTimeout(() => src.stop(), 1200);
+    },
     suspend() { return this.ctx && this.ctx.suspend(); },
     resume() { return this.ctx && this.ctx.resume(); },
   };
@@ -101,6 +122,17 @@
     // distant thunder: slow, low rumble that swells and fades (quiet, far away)
     farThunder() { audio.noise(4, 0.16, 280, 50, 0, 'lowpass'); audio.tone(48, 3.2, 'sine', 0.12, 0.2, 34); },
     organ() { [131, 156, 196, 262].forEach((f) => { audio.tone(f, 2.6, 'triangle', 0.1); audio.tone(f * 2, 2.6, 'sine', 0.04); }); },
+    // story 2: bat squeaks (pitch rises with progress), a shriek on a wrong tap, and a thud as Dracula drops in
+    squeak(n) { const f = [2400, 2800, 3300][n - 1] || 2400; audio.tone(f, 0.12, 'sine', 0.08, 0, f * 1.25); audio.tone(f * 1.1, 0.1, 'sine', 0.05, 0.1, f * 1.4); },
+    screech() { audio.tone(1700, 0.5, 'sawtooth', 0.1, 0, 700); audio.noise(0.5, 0.1, 4000, 1500, 0, 'highpass'); },
+    thud() { audio.tone(70, 0.45, 'sine', 0.35, 0, 40); sfx.door(); },
+    // Dracula's appearance in the cave: the recorded "Dracula stab" (Freesound, CC BY 4.0, see credits); if it failed to load,
+    // a synthesized low D-minor organ swell, whoosh, high shiver and thud play instead
+    sting() {
+      if (audio.stabBuf) return audio.playBuffer(audio.stabBuf, 0.9);
+      audio.tone(73.4, 2.8, 'sawtooth', 0.09); [146.8, 174.6, 220].forEach((f) => audio.tone(f, 2.6, 'triangle', 0.08, 0.05));
+      audio.noise(1.6, 0.12, 250, 2600); audio.tone(1500, 1.4, 'sine', 0.04, 0.2, 950); audio.tone(60, 0.7, 'sine', 0.3, 0.1, 38);
+    },
     bats() { audio.noise(1.6, 0.16, 900, 3200); audio.noise(1.2, 0.1, 2500, 800, 0.4, 'highpass'); },
     laugh() { [200, 170, 200, 160, 190].forEach((f, i) => audio.tone(f, 0.16, 'square', 0.08, i * 0.2, f * 0.8)); },
     end() { audio.tone(196, 1.2, 'sine', 0.2); audio.tone(147, 1.4, 'sine', 0.2, 0.25); },
@@ -115,7 +147,7 @@
   /* occasional owl hoot: random 18–35 s gaps on the shared clock, so Pause delays it too */
   function scheduleOwl(first = false) {
     clock.after(first ? 9000 : 18000 + Math.random() * 17000, () => {
-      if (story.mode === 'idle') sfx.owl();
+      if (currentStory().mode === 'idle') sfx.owl();
       scheduleOwl();
     });
   }
@@ -123,7 +155,7 @@
   /* ambient lightning: random 9–20 s gaps on the shared clock; the thunder arrives 0.7–2.2 s later, far away */
   function scheduleLightning(first = false) {
     clock.after(first ? 11000 : 9000 + Math.random() * 11000, () => {
-      if (story.mode === 'idle') {
+      if (scene === 1 && story.mode === 'idle') {
         const l = $('lightning'), bolt = $('bolt');
         bolt.style.left = `${6 + Math.random() * 16}%`;
         l.classList.remove('on'); void l.offsetWidth; l.classList.add('on'); clock.after(900, () => l.classList.remove('on'));
@@ -143,13 +175,18 @@
       [6000, 'Something is watching from the trees…'],
       [20000, 'Many eyes glow in the dark. Trust the one that glares the biggest.'],
     ],
+    bats: [
+      [5000, 'The bats hang restless above the cave…'],
+      [20000, 'The old graves carry numbers. Tap them.'],
+    ],
   };
   const hints = {
     lastActive: 0, shown: -1,
     reset() { this.lastActive = clock.t; this.shown = -1; hintEl.classList.remove('show'); },
     update() {
-      if (story.mode !== 'idle') return;
-      const steps = HINTS[story.phase], idle = clock.t - this.lastActive;
+      const s = currentStory(), idle = clock.t - this.lastActive;
+      if (s.mode !== 'idle') return;
+      const steps = HINTS[s.phase];
       const step = steps.reduce((n, [ms], i) => (idle >= ms ? i : n), -1);
       if (step > this.shown) { this.shown = step; hintEl.textContent = steps[step][1]; hintEl.classList.add('show'); }
     },
@@ -157,17 +194,18 @@
 
   /* ---------- feedback helpers ---------- */
   const batSVG = '<svg viewBox="0 0 40 22"><path d="M20 20 L16 9 L11 12 L0 2 Q8 12 6 18 Q12 14 16 20 Q18 17 20 20 Q22 17 24 20 Q28 14 34 18 Q32 12 40 2 L29 12 L24 9Z"/></svg>';
-  function ringAt(el, color) {
+  function ringAt(el, color, soft = false) {
     const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect(), d = document.createElement('div');
-    d.className = 'ring'; d.style.cssText = `left:${r.left - s.left + r.width / 2}px;top:${r.top - s.top + r.height / 2}px;--c:${color}`;
+    d.className = soft ? 'ring soft' : 'ring'; d.style.cssText = `left:${r.left - s.left + r.width / 2}px;top:${r.top - s.top + r.height / 2}px;--c:${color}`;
     stage.appendChild(d); clock.after(800, () => d.remove());
   }
   function toast(text, ms = 2600) { toastEl.textContent = text; toastEl.classList.add('show'); clock.after(ms, () => toastEl.classList.remove('show')); }
   function setPips(n) {
-    [...$('pips').children].forEach((el, i) => el.classList.toggle('on', i < n));
-    $('pips').setAttribute('aria-label', `Story progress ${n} of 4`);
+    const pips = stage.querySelector('.pips');
+    [...pips.children].forEach((el, i) => el.classList.toggle('on', i < n));
+    pips.setAttribute('aria-label', `Story progress ${n} of ${pips.children.length}`);
   }
-  function flash() { if (reduced()) return; const f = $('flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
+  function flash() { if (reduced()) return; const f = stage.querySelector('.flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
 
   /* ---------- Story 1: "The Count Awakens" — light the statues in order → find the right eyes → castle payoff ---------- */
   const ORDER = [2, 3, 5]; // front-left (red-eyed), then top right, then bottom right
@@ -226,18 +264,87 @@
       at(7000, () => { sfx.laugh(); flash(); $('dracula').classList.remove('show'); $('dracShadow').classList.remove('show'); });
       at(7500, () => { stage.classList.remove('flare'); seyes.forEach((l) => l.classList.remove('on')); sfx.end(); });
       at(8500, () => {
-        story.reset(); story.mode = 'idle'; stage.classList.remove('story'); hints.reset();
-        toast('The castle falls quiet… for now. Try again?', 3500);
+        story.reset(); story.mode = 'done'; stage.classList.remove('story'); hints.reset();
+        $('nav1').hidden = false; $('replay1').focus({ preventScroll: true });
+        toast('The castle falls quiet… Replay it, or follow the road on.', 4000);
       });
     },
   };
 
+  /* ---------- Story 2: "The Cave Awakens" — tap the hanging bats 1, 3, 5 in order → cave glows red → Dracula drops in upside down ---------- */
+  const bats2 = [0, 1, 2, 3, 4].map((i) => $('b' + i));
+  const ORDER2 = [0, 2, 4]; // bats 1, 3 and 5 from the left
+  const story2 = {
+    mode: 'idle',        // idle | story (payoff playing, input locked) | wrong (red-eye reset blink) | done (nav arrows shown)
+    phase: 'bats',
+    progress: 0,
+    tap(i) {
+      if (story2.mode !== 'idle' || !clock.running) return;
+      hints.reset();
+      const el = bats2[i];
+      if (el.classList.contains('on')) return;   // already awake
+      if (i !== ORDER2[story2.progress]) { story2.wrong(i); return; }
+      story2.progress++;
+      el.classList.add('on');   // a correct bat squeaks and glows; they all fly away together in the payoff
+      sfx.squeak(story2.progress); setPips(story2.progress);
+      if (story2.progress === ORDER2.length) { story2.mode = 'story'; stage.classList.add('story2'); hintEl.classList.remove('show'); clock.after(700, story2.play); }
+    },
+    wrong(i) { // the tapped bat's eyes turn red, everything resets
+      story2.mode = 'wrong'; sfx.screech();
+      bats2[i].classList.add('wrong'); toast('The bats shriek and settle. Start again…', 2000);
+      clock.after(1100, () => { story2.reset(true); story2.mode = 'idle'; hints.reset(); });
+    },
+    reveal(g) { // the number carved on this gravestone shows for 3 s (quietly: no ring); tapping again restarts the timer
+      if (story2.mode !== 'idle' || !clock.running) return;
+      hints.reset(); sfx.whisper();
+      g.classList.add('rev'); const id = (g._rev = (g._rev || 0) + 1);
+      clock.after(3000, () => { if (id === g._rev) g.classList.remove('rev'); });
+    },
+    reset(fadeBack = false) { // bats that flew away return (fading in after a wrong tap or a replay)
+      story2.progress = 0; setPips(0);
+      bats2.forEach((b) => { const flew = b.classList.contains('fly'); b.classList.remove('on', 'wrong', 'fly'); if (fadeBack && flew) { b.classList.add('back'); clock.after(900, () => b.classList.remove('back')); } });
+    },
+    play() { // ~8 s: bats take off → cave glows red → Dracula fades in upside down → laugh → fade → rest
+      const at = (ms, fn) => clock.after(ms, fn);
+      document.activeElement && document.activeElement.blur();
+      document.querySelectorAll('.grave').forEach((g) => g.classList.remove('rev')); sfx.bats(); bats2.forEach((b) => b.classList.add('fly'));
+      at(1400, () => { stage.classList.add('lit'); sfx.rise(); });
+      at(2600, () => { $('drac2').classList.add('show'); sfx.sting(); });   // he fades in (no drop), with a dramatic sting
+      at(4200, () => { sfx.laugh(); flash(); });
+      at(6000, () => $('drac2').classList.remove('show'));
+      at(6800, () => { stage.classList.remove('lit'); sfx.end(); });
+      at(8000, () => {
+        story2.reset(true); story2.mode = 'done'; stage.classList.remove('story2'); hints.reset();
+        $('nav2').hidden = false; $('replay2').focus({ preventScroll: true });
+        toast('The cave falls quiet… Replay it, or go back to the castle.', 4000);
+      });
+    },
+  };
+  // 36 thin rain streaks with random position, speed, delay and faintness
+  $('rain').innerHTML = Array.from({ length: 36 }, () =>
+    `<i style="--rx:${(Math.random() * 115).toFixed(1)};--rd:${(0.9 + Math.random() * 0.7).toFixed(2)}s;--rl:${(-Math.random() * 2).toFixed(2)}s;--ro:${(0.3 + Math.random() * 0.35).toFixed(2)}"></i>`).join('');
+  const currentStory = () => (scene === 1 ? story : story2);
+
+  /* ---------- scene switching (next / back / replay arrows) ---------- */
+  function showScene(n) {
+    scene = n; stage = n === 1 ? stage1 : stage2;
+    stage1.hidden = n !== 1; stage2.hidden = n !== 2;
+    hintEl = stage.querySelector('.hint'); toastEl = stage.querySelector('.toast');
+    n === 2 ? audio.startRain() : audio.stopRain();
+    hints.reset();
+  }
+  function replay(n) {
+    const st = n === 1 ? story : story2;
+    st.reset(true); st.mode = 'idle'; $('nav' + n).hidden = true; hints.reset();
+    $(n === 1 ? 'pause' : 'pause2').focus({ preventScroll: true });
+  }
+
   /* ---------- global Play/Pause: audio, CSS animation, shared timers and interaction together ---------- */
   function setPaused(paused) {
     clock.running = !paused; clock.last = performance.now();
-    stage.classList.toggle('paused', paused);
+    stage1.classList.toggle('paused', paused); stage2.classList.toggle('paused', paused);
     document.body.classList.toggle('paused', paused);
-    const btn = $('pause'); btn.setAttribute('aria-pressed', String(paused)); btn.setAttribute('aria-label', paused ? 'Play' : 'Pause');
+    document.querySelectorAll('.pause').forEach((btn) => { btn.setAttribute('aria-pressed', String(paused)); btn.setAttribute('aria-label', paused ? 'Play' : 'Pause'); });
     paused ? audio.suspend() : audio.resume();
   }
   const isPaused = () => !clock.running;
@@ -254,7 +361,13 @@
   });
   gargs.forEach((g, i) => g.addEventListener('click', () => story.tapStatue(i)));
   eyeEls.forEach((e, k) => e.addEventListener('click', () => story.tapEyes(k)));
-  $('pause').addEventListener('click', () => setPaused(!isPaused()));
+  bats2.forEach((b, i) => b.addEventListener('click', () => story2.tap(i)));
+  document.querySelectorAll('.grave').forEach((g) => g.addEventListener('click', () => story2.reveal(g)));
+  $('replay1').addEventListener('click', () => replay(1));
+  $('next1').addEventListener('click', () => { $('nav1').hidden = true; story.mode = 'idle'; story.reset(); showScene(2); story2.mode = 'idle'; });
+  $('replay2').addEventListener('click', () => replay(2));
+  $('back2').addEventListener('click', () => { $('nav2').hidden = true; story2.mode = 'idle'; showScene(1); story.mode = 'idle'; });
+  document.querySelectorAll('.pause').forEach((b) => b.addEventListener('click', () => setPaused(!isPaused())));
   document.addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'p' && !stage.hidden) setPaused(!isPaused()); });
   document.addEventListener('visibilitychange', () => { if (document.hidden && !stage.hidden && !isPaused()) setPaused(true); });
 })();

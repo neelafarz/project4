@@ -17,22 +17,28 @@ html, body { margin: 0; height: 100%; background: #070a1e; color: var(--ink);
 button { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid #fff; outline-offset: 3px; box-shadow: 0 0 0 6px #7a2fd0; }
 
-/* ---------- start screen ---------- */
-.start { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 18px; padding: 24px; text-align: center; background: radial-gradient(circle at 50% 30%, #1d2c66, #070a1e 70%); }
-.start h1 { margin: 0; font-size: clamp(2.2rem, 11vw, 3.4rem); line-height: 1.05; color: #ff7a6a;
-  text-shadow: 0 0 18px rgba(255, 60, 40, .6); letter-spacing: .02em; }
-.start h1 span { color: #9fc0ff; text-shadow: 0 0 18px rgba(90, 140, 255, .7); }
-.tagline { margin: 0; font-size: 1.1rem; line-height: 1.5; max-width: 22em; }
-.note { margin: 0; font-size: .95rem; color: #c3cdf0; }
-.motion-opt { display: flex; align-items: center; gap: 12px; min-height: 48px; font-size: 1.05rem; cursor: pointer; }
-.motion-opt input { width: 26px; height: 26px; accent-color: var(--accent); }
-.btn-primary { min-width: 200px; min-height: 56px; padding: 0 32px; font-size: 1.3rem; font-weight: 700; border: 0; border-radius: 30px;
-  background: linear-gradient(#ff6a55, #b8231a); color: #fff; cursor: pointer; box-shadow: 0 6px 24px rgba(255, 60, 40, .45); }
-.btn-primary:active { transform: scale(.97); }
-.credits { font-size: .9rem; max-width: 24em; }
-.credits summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; justify-content: center; }
-.credits ul { text-align: left; margin: 0; padding-left: 1.2em; line-height: 1.5; }
+/* ---------- start screen: neumorphic navy (soft raised and inset shapes, one base colour, light from the top left) ---------- */
+.start { --base: #1c2750; --hi: #2a3a72; --lo: #0f1733; --soft: #a9b7e6;
+  --raise: -7px -7px 16px var(--hi), 7px 7px 16px var(--lo); --inset: inset 5px 5px 11px var(--lo), inset -5px -5px 11px var(--hi);
+  position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 20px; padding: 24px; text-align: center; background: var(--base); overflow-y: auto; }
+.start h1 { margin: 0 0 4px; font-size: clamp(2.2rem, 11vw, 3.4rem); line-height: 1.05; color: #ff8574;
+  text-shadow: 3px 3px 7px var(--lo), -3px -3px 7px var(--hi), 0 0 16px rgba(255, 80, 60, .35); letter-spacing: .02em; }
+.start h1 span { color: #a9c6ff; text-shadow: 3px 3px 7px var(--lo), -3px -3px 7px var(--hi), 0 0 16px rgba(110, 160, 255, .45); }
+.tagline { margin: 0; font-size: 1.05rem; line-height: 1.5; max-width: 22em; padding: 18px 22px; border-radius: 22px; background: var(--base); box-shadow: var(--inset); color: #e9eeff; }
+.note { margin: 0; font-size: .95rem; color: var(--soft); }
+.motion-opt { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 22px; border-radius: 30px; background: var(--base); box-shadow: var(--raise); font-size: 1.05rem; color: #e9eeff; cursor: pointer; }
+.motion-opt input { appearance: none; -webkit-appearance: none; flex: none; width: 28px; height: 28px; margin: 0; border-radius: 9px; background: var(--base); box-shadow: var(--inset); cursor: pointer; display: grid; place-items: center; }
+.motion-opt input::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: #7fb0ff; box-shadow: 0 0 9px #7fb0ff; transform: scale(0); transition: transform .2s; }
+.motion-opt input:checked::after { transform: scale(1); }
+.btn-primary { min-width: 200px; min-height: 58px; padding: 0 34px; font-size: 1.3rem; font-weight: 700; border: 0; border-radius: 30px; cursor: pointer;
+  background: var(--base); color: #ffb0a4; letter-spacing: .06em; text-shadow: 0 0 12px rgba(255, 90, 70, .55); box-shadow: var(--raise); transition: box-shadow .15s, color .15s; }
+.btn-primary:hover { color: #ffd0c8; }
+.btn-primary:active { box-shadow: var(--inset); transform: none; }
+.credits { font-size: .9rem; max-width: 24em; width: 100%; border-radius: 22px; background: var(--base); box-shadow: var(--raise); color: #dbe3ff; }
+.credits[open] { box-shadow: var(--inset); }
+.credits summary { cursor: pointer; min-height: 48px; display: flex; align-items: center; justify-content: center; }
+.credits ul { text-align: left; margin: 0; padding: 4px 22px 18px 38px; line-height: 1.5; }
 .credits a { color: #ffb4a8; }
 
 /* ---------- stage ---------- */
@@ -175,3 +181,61 @@ button { font: inherit; color: inherit; }
 [data-motion="reduced"] .ring { animation: ringFade .7s forwards; }
 @keyframes ringFade { from { opacity: 1; } to { opacity: 0; } }
 [data-motion="reduced"] .hint, [data-motion="reduced"] .toast { transition: none; }
+
+/* a quieter ring for story 2 taps */
+.ring.soft { width: 14px; height: 14px; border-width: 2px; animation: ringSoft .7s ease-out forwards; }
+@keyframes ringSoft { from { transform: translate(-50%, -50%) scale(1); opacity: .55; } to { transform: translate(-50%, -50%) scale(2.4); opacity: 0; } }
+
+/* ---------- story 2: the cave (sizes in u = 1% of stage width; stage is 216.67u tall) ---------- */
+/* cave on the ridge where the path ends; the black mouth is at roughly 52% across the cave image */
+.cave { left: 17%; top: 9%; width: 66%; height: auto; pointer-events: none; }
+.cave-glow { left: 50.5%; top: 11.5%; width: calc(var(--u) * 30); height: calc(var(--u) * 30); transform: translate(-50%, 0); mix-blend-mode: screen; opacity: 0; transition: opacity 1.2s; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 50, 30, .95), rgba(220, 20, 20, .5) 55%, transparent); }
+.lit .cave-glow { opacity: 1; }
+/* Dracula hangs upside down from the cave ceiling and drops in; the transform keeps the 180deg flip */
+.drac2 { left: 50.8%; top: 16%; height: calc(var(--u) * 17); width: auto; opacity: 0; pointer-events: none; transform: translate(-50%, 0) rotate(180deg); transition: opacity 1.6s ease-in; }
+.drac2.show { opacity: 1; }
+.branch { left: -5%; top: 41.5%; width: 108%; height: auto; pointer-events: none; }   /* runs off both edges, like a limb from trees out of frame */
+
+/* bats: the button is the 48px+ tap target, centred on --x%, feet on the branch. They hang perfectly still; correct taps make them glow. */
+.bat2 { transform: none; /* bats are placed by top-left, so cancel the hotspot centring */ left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); width: calc(var(--u) * 14.5); min-width: 48px; margin-left: calc(var(--u) * -7.25); aspect-ratio: 2 / 3; }
+.bat2 img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.bat2 .lit { opacity: 0; transition: opacity .15s; }
+.bat2.on .dorm { filter: drop-shadow(0 0 calc(var(--u) * 1.1) rgba(90, 168, 255, .85)); transition: filter .6s; }   /* correct bat: a soft blue glow, no movement */
+.bat2.wrong .lit { opacity: 1; filter: drop-shadow(0 0 calc(var(--u) * 1.2) #ff2a1a); }   /* wrong tap: eyes turn red, nothing moves */
+/* when all three are right, every bat flies away (spinning upright as it goes), staggered */
+.bat2.fly { pointer-events: none; animation: batFly 1.8s ease-in forwards; animation-delay: calc(var(--i) * .1s); }
+.bat2.back { animation: batBack .8s ease-out; }   /* after a wrong tap the bats return */
+@keyframes batFly { 20% { transform: translateY(calc(var(--u) * 3)); } to { transform: translate(calc(var(--u) * var(--fx)), calc(var(--u) * -80)) rotate(180deg) scale(.5); opacity: 0; } }
+@keyframes batBack { from { opacity: 0; } to { opacity: 1; } }
+.story2 .hotspot { pointer-events: none; }
+
+/* hint numbers: carved into three gravestones, stone-coloured and translucent so they blend in; tapping a stone lets its number show for a few seconds */
+.grave { width: calc(var(--u) * var(--w)); height: calc(var(--u) * var(--h)); min-width: 48px; min-height: 48px; }
+.gnum { position: absolute; left: calc(var(--nx) * 1%); top: calc(var(--ny) * 1%); transform: translate(-50%, -50%); pointer-events: none;
+  font: 700 calc(var(--u) * 6.5) / 1 Georgia, "Times New Roman", serif; color: rgba(176, 192, 228, .5); mix-blend-mode: screen;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .55), 0 1px 0 rgba(150, 170, 215, .18); opacity: 0; transition: opacity .8s; }
+.grave.rev .gnum { opacity: 1; }
+
+/* next / back / replay arrows after a payoff: 56px round buttons */
+.nav { left: 0; right: 0; top: 91%; display: flex; justify-content: center; gap: 22px; }
+.navbtn { width: 56px; height: 56px; border-radius: 50%; border: 2px solid rgba(244, 246, 255, .7); background: var(--panel); cursor: pointer; display: grid; place-items: center;
+  box-shadow: 0 0 18px rgba(90, 168, 255, .55); }
+.navbtn svg { width: 28px; height: 28px; fill: var(--ink); }
+.navbtn:active { transform: scale(.94); }
+
+/* reduced motion: no swaying, shaking or flying; glows and fades only */
+[data-motion="reduced"] .bat2.fly { animation: batFade .6s forwards; }
+[data-motion="reduced"] .bat2.back { animation: none; }
+@keyframes batFade { to { opacity: 0; } }
+[data-motion="reduced"] .gnum { transition: none; }
+[data-motion="reduced"] .drac2 { transition: opacity .6s; }
+[data-motion="reduced"] .flash { display: none; }
+
+/* story 2: light, quiet rain (thin translucent streaks over the whole scene; drops are created in app.js) */
+.rain i { position: absolute; top: 0; width: 1px; height: calc(var(--u) * 4.5); left: calc(var(--rx) * 1%); opacity: 0;
+  background: linear-gradient(rgba(190, 210, 255, 0), rgba(200, 218, 255, .7)); transform: rotate(8deg);
+  animation: rainFall var(--rd) linear var(--rl) infinite; }
+@keyframes rainFall { 0% { opacity: 0; transform: translate(0, calc(var(--u) * -6)) rotate(8deg); } 10% { opacity: var(--ro); }
+  90% { opacity: var(--ro); } 100% { opacity: 0; transform: translate(calc(var(--u) * -9), calc(var(--u) * 222)) rotate(8deg); } }
+[data-motion="reduced"] .rain { display: none; }   /* reduced motion: no falling drops (the soft rain sound stays) */
