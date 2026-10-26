@@ -31,7 +31,7 @@
 
   /* ---------- audio: CC0 loops + owl clip + synthesized effects (one master gain) ---------- */
   const audio = {
-    ctx: null, master: null, owlBuf: null, toccataBuf: null, stabBuf: null,
+    ctx: null, master: null, owlBuf: null, toccataBuf: null, stabBuf: null, laughBuf: null,
     async init() {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
@@ -46,6 +46,7 @@
       this.load('assets/audio/owl_hoot.mp3').then((b) => { this.owlBuf = b; });
       this.load('assets/audio/toccata_intro.mp3').then((b) => { this.toccataBuf = b; });
       this.load('assets/audio/dracula_stab.wav').then((b) => { this.stabBuf = b; });
+      this.load('assets/audio/dracula_laugh.wav').then((b) => { this.laughBuf = b; });
     },
     async load(url) {
       try { return await this.ctx.decodeAudioData(await (await fetch(url)).arrayBuffer()); }
@@ -148,6 +149,8 @@
     steam() { audio.noise(2.4, 0.07, 500, 2200, 0, 'bandpass'); },
     chime() { [[110, 0.22], [303.6, 0.12], [594, 0.07], [982, 0.04]].forEach(([f, v]) => audio.tone(f, 3.6, 'sine', v)); audio.tone(55, 3.5, 'sine', 0.15); },
     bats() { audio.noise(1.6, 0.16, 900, 3200); audio.noise(1.2, 0.1, 2500, 800, 0.4, 'highpass'); },
+    // Dracula's laugh after the kitchen summon: recorded horror laugh (Freesound, CC BY 4.0, see credits), first 5 s; synthesized laugh if it failed to load
+    summonLaugh() { audio.laughBuf ? audio.playBuffer(audio.laughBuf, 0.85) : sfx.laugh(); },
     laugh() { [200, 170, 200, 160, 190].forEach((f, i) => audio.tone(f, 0.16, 'square', 0.08, i * 0.2, f * 0.8)); },
     end() { audio.tone(196, 1.2, 'sine', 0.2); audio.tone(147, 1.4, 'sine', 0.2, 0.25); },
     // owl: recorded clip (Freesound, see credits); synthesized "hoo ... hoo-hoo" fallback if it did not load
@@ -347,7 +350,7 @@
   const GOOD = new Set(['moon', 'pumpkin', 'pasta']);   // moon essence, pumpkin, bat-shaped pasta
   const ingEls = Object.fromEntries(KING.map((k) => [k, $('ing-' + k)]));
   // one spot per shelf (left shelves top→bottom, then right): bottom-centre of an ingredient as % of the stage
-  const SLOTS = [[14.7, 23.6], [17, 32.3], [17.6, 40.9], [18.2, 49.3], [18.2, 57.3], [85.2, 23.3], [83.7, 32.5], [82.8, 40.9], [82.3, 49.3], [81.9, 57.2]];
+  const SLOTS = [[14.7, 23.0], [17.0, 31.7], [17.6, 40.3], [18.2, 48.7], [18.2, 56.7], [85.2, 22.7], [83.7, 31.9], [82.8, 40.3], [82.3, 48.7], [81.9, 56.6]];
   const WRONG_LINES = ['The pot coughs it right back out.', 'Not even a ghost would eat that.', 'Too lumpy. Try again.'];
   const kitchen = {
     mode: 'idle',        // idle | story (payoff playing) | done (arrows shown)
@@ -371,15 +374,14 @@
       const d = document.createElement('div'); d.className = 'puff'; d.style.cssText = `left:${x}%;top:${y}%;--ps:${size};${color ? `--pc:${color}` : ''}`;
       stage.appendChild(d); clock.after(900, () => d.remove());
     },
-    setRunes(n) { [...$('runes').children].forEach((r, i) => r.classList.toggle('on', i < n)); },
     tap(id) {
       if (kitchen.mode !== 'idle' || kitchen.busy || !clock.running) return;
       const el = ingEls[id]; if (el.classList.contains('used')) return;
       hints.reset(); kitchen.busy = true;
-      if (GOOD.has(id)) {   // drops into the cauldron with its own sound and lights a rune
+      if (GOOD.has(id)) {   // drops into the cauldron with its own sound and adds a progress dot
         sfx.ing(id); kitchen.fly(el, 650, false);
         clock.after(650, () => {
-          el.classList.add('used'); kitchen.progress++; setPips(kitchen.progress); kitchen.setRunes(kitchen.progress); sfx.blorp();
+          el.classList.add('used'); kitchen.progress++; setPips(kitchen.progress); sfx.blorp();
           kitchen.busy = false;
           if (kitchen.progress === 3) { kitchen.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show'); clock.after(500, kitchen.play); }
         });
@@ -393,7 +395,7 @@
       clock.after(950, () => { if (id === 'garlic') kitchen.resetAll(true); kitchen.busy = false; });
     },
     resetAll(fadeBack = false) { // used ingredients return to their shelves and the recipe clears
-      kitchen.progress = 0; setPips(0); kitchen.setRunes(0);
+      kitchen.progress = 0; setPips(0);
       KING.forEach((k) => { const el = ingEls[k], used = el.classList.contains('used'); el.classList.remove('used');
         if (fadeBack && used) { el.classList.add('back'); clock.after(800, () => el.classList.remove('back')); } });
     },
@@ -403,11 +405,12 @@
       document.activeElement && document.activeElement.blur();
       stage.classList.add('cook'); sfx.bubbles();
       at(600, () => sfx.steam());
-      at(2000, () => { $('kdrac').classList.add('show'); sfx.chime(); toast('A voice rumbles: “Who dares summon me… for DINNER?”', 2400); });
-      at(4300, () => toast('“Hmm… acceptable. Tell the bats I approve.”', 2200));
-      at(5600, () => { const d = $('kdrac'); d.classList.add('gone'); d.classList.remove('show'); kitchen.puffAt(50, 56, 24, 'rgba(150, 110, 190, .85)'); sfx.puff(); });
-      at(6400, () => { stage.classList.remove('cook'); $('kdrac').classList.remove('gone'); sfx.end(); });
-      at(7400, () => {
+      at(1600, () => { $('kdrac').classList.add('show'); sfx.chime(); toast('A voice rumbles: “Who dares summon me… for DINNER?”', 2000); });
+      at(1900, () => sfx.summonLaugh());   // his laugh rolls out just after the bell (5 s, ends as he leaves)
+      at(3600, () => toast('“Hmm… acceptable. Not bad for a mortal. Tell the bats I approve.”', 3000));
+      at(6400, () => { const d = $('kdrac'); d.classList.add('gone'); d.classList.remove('show'); kitchen.puffAt(50, 56, 24, 'rgba(150, 110, 190, .85)'); sfx.puff(); });
+      at(7100, () => { stage.classList.remove('cook'); $('kdrac').classList.remove('gone'); sfx.end(); });
+      at(8000, () => {
         kitchen.reset(true); kitchen.mode = 'done'; stage.classList.remove('story'); hints.reset();
         stage.classList.add('kdone'); $('navK').hidden = false; $('replayK').focus({ preventScroll: true });
         toast('The kitchen falls quiet… Replay it, or move on.', 3500);

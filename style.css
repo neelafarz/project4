@@ -274,14 +274,10 @@ button { font: inherit; color: inherit; }
   background: radial-gradient(circle, var(--pc, rgba(225, 215, 240, .85)), transparent 70%); animation: puff .9s ease-out forwards; }
 @keyframes puff { 0% { opacity: .95; transform: translate(-50%, -50%) scale(.3); } 100% { opacity: 0; transform: translate(-50%, -62%) scale(1.7); } }
 
-/* recipe riddle: small plain text on the floor (no box); runes light as the right ingredients go in */
+/* recipe riddle: small plain text on the floor (no box), in the same font as the rest of the interface */
 .kcaption { left: 6%; right: 6%; top: 82.5%; text-align: center; pointer-events: none; transition: opacity .4s; }
 .kdone .kcaption { opacity: 0; }
-.kcaption p { margin: 0 0 8px; font: italic .85rem / 1.35 Georgia, "Times New Roman", serif; color: #eadff8; text-shadow: 0 1px 3px #000, 0 0 8px #000; }
-.runes { display: flex; justify-content: center; gap: 14px; }
-.runes i { font-style: normal; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: .9rem;
-  color: rgba(234, 223, 248, .55); border: 1.5px solid rgba(234, 223, 248, .45); transition: background .4s, color .4s, box-shadow .4s, border-color .4s; }
-.runes i.on { color: #fff; background: #b31d1d; border-color: #ff7a6a; box-shadow: 0 0 10px rgba(255, 60, 40, .85); }
+.kcaption p { margin: 0; font: .9rem / 1.4 "Trebuchet MS", system-ui, sans-serif; color: #eef2ff; text-shadow: 0 1px 3px #000, 0 0 8px #000; }
 
 [data-motion="reduced"] .bubbles, [data-motion="reduced"] .ing.back { animation: none; }
 [data-motion="reduced"] .bubbles i { animation: none; opacity: .5; }

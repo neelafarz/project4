@@ -175,3 +175,7 @@ When directed, save the complete conversation as `transcripts/plan-YYYY-MM-DD_HH
 - **Observed (Developer):** Dracula too small; hint/toast boxes way too large; dislikes the parchment box at the bottom (suggested timed hints or a small line of text); food should sit on the shelves properly (move higher); will find a better sound to play after he is summoned.
 - **Changes:** Dracula 38u → 52u; all hint/toast boxes shrunk in every scene (smaller text and padding, shrink-wrapped, more transparent); parchment replaced by a small plain riddle line with faint runes (hidden once the payoff ends); ingredient spots raised ~1.4% so they rest on the plank surfaces (checked on 2× crops). Summon sound left as my synthesized bell until the Developer supplies one.
 - **Verified:** kitchen 23/23, castle 15/15, cave 34/34, zero console errors; screenshot of the payoff. **Not verified:** a real phone.
+
+### Revision 16 (kitchen)
+- **Observed (Developer):** riddle font poor; the extra rune symbols were unwanted (progress should be only the dots at the top left); ingredients still a smidge low; Dracula's acceptance line too short.
+- **Changes:** riddle now in the interface font (Trebuchet), non-italic; runes removed entirely; ingredients raised another 0.6%; acceptance line is longer ("Hmm… acceptable. Not bad for a mortal. Tell the bats I approve.") and stays on screen 3 s (was 2.2 s); payoff retimed (bell 1.6 s, laugh 1.9 s, line 2 at 3.6 s, he leaves 6.4 s, done 8.0 s), still ~9 s from the third tap. Interpreted "too short" as both the words and the time on screen.
