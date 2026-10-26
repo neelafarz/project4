@@ -347,7 +347,7 @@
   const GOOD = new Set(['moon', 'pumpkin', 'pasta']);   // moon essence, pumpkin, bat-shaped pasta
   const ingEls = Object.fromEntries(KING.map((k) => [k, $('ing-' + k)]));
   // one spot per shelf (left shelves top→bottom, then right): bottom-centre of an ingredient as % of the stage
-  const SLOTS = [[14.7, 25], [17, 33.7], [17.6, 42.3], [18.2, 50.7], [18.2, 58.7], [85.2, 24.7], [83.7, 33.9], [82.8, 42.3], [82.3, 50.7], [81.9, 58.6]];
+  const SLOTS = [[14.7, 23.6], [17, 32.3], [17.6, 40.9], [18.2, 49.3], [18.2, 57.3], [85.2, 23.3], [83.7, 32.5], [82.8, 40.9], [82.3, 49.3], [81.9, 57.2]];
   const WRONG_LINES = ['The pot coughs it right back out.', 'Not even a ghost would eat that.', 'Too lumpy. Try again.'];
   const kitchen = {
     mode: 'idle',        // idle | story (payoff playing) | done (arrows shown)
@@ -397,7 +397,7 @@
       KING.forEach((k) => { const el = ingEls[k], used = el.classList.contains('used'); el.classList.remove('used');
         if (fadeBack && used) { el.classList.add('back'); clock.after(800, () => el.classList.remove('back')); } });
     },
-    reset(fresh = false) { kitchen.resetAll(fresh); kitchen.busy = false; kitchen.layout(); },
+    reset(fresh = false) { kitchen.resetAll(fresh); kitchen.busy = false; kitchen.layout(); stageK.classList.remove('kdone'); },
     play() { // ~8.5 s: soup bubbles + red glow → steam → Dracula fades in behind the pot with a low bell → funny lines → he leaves in a puff
       const at = (ms, fn) => clock.after(ms, fn);
       document.activeElement && document.activeElement.blur();
@@ -409,7 +409,7 @@
       at(6400, () => { stage.classList.remove('cook'); $('kdrac').classList.remove('gone'); sfx.end(); });
       at(7400, () => {
         kitchen.reset(true); kitchen.mode = 'done'; stage.classList.remove('story'); hints.reset();
-        $('navK').hidden = false; $('replayK').focus({ preventScroll: true });
+        stage.classList.add('kdone'); $('navK').hidden = false; $('replayK').focus({ preventScroll: true });
         toast('The kitchen falls quiet… Replay it, or move on.', 3500);
       });
     },

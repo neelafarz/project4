@@ -170,3 +170,8 @@ When directed, save the complete conversation as `transcripts/plan-YYYY-MM-DD_HH
 - [x] Kitchen assets sliced and added (`ing_*.png`, `kitchen_bg.png`, `kitchen_cauldron.png`).
 - [x] Kitchen scene, logic, sounds and hints built; castle → kitchen → cave navigation; `#kitchen` / `#cave` shortcuts. Cave tests now open the cave directly.
 - [x] Verified (headless 390×844, screenshots reviewed): `tests/story_kitchen.py` 23/23, `tests/story1_baseline.py` 15/15, `tests/story2.py` (cave) 34/34, zero console errors. Not verified: sounds by ear, physical phone, shelf alignment on other phone sizes. Then pushed; Developer review on a phone; final docs, transcripts, deploy check.
+
+### Revision 15 (kitchen, Developer's first look)
+- **Observed (Developer):** Dracula too small; hint/toast boxes way too large; dislikes the parchment box at the bottom (suggested timed hints or a small line of text); food should sit on the shelves properly (move higher); will find a better sound to play after he is summoned.
+- **Changes:** Dracula 38u → 52u; all hint/toast boxes shrunk in every scene (smaller text and padding, shrink-wrapped, more transparent); parchment replaced by a small plain riddle line with faint runes (hidden once the payoff ends); ingredient spots raised ~1.4% so they rest on the plank surfaces (checked on 2× crops). Summon sound left as my synthesized bell until the Developer supplies one.
+- **Verified:** kitchen 23/23, castle 15/15, cave 34/34, zero console errors; screenshot of the payoff. **Not verified:** a real phone.
