@@ -1,3 +1,10 @@
+1d0f04c | 2026-10-26 | neelafarz | Fill iPhone windows, scroll art, restyled buttons, one-line home screen, single kitchen line; save transcripts
+d06d459 | 2026-10-26 | neelafarz | Midnight Manor: narrative flow, recipe scroll, roach, cave asleep, interactive after each story, requirements test
+2b69411 | 2026-10-26 | neelafarz | Kitchen: summon laugh (CC BY 4.0, credited), riddle font, runes removed, longer acceptance line, ingredients raised
+48c96ec | 2026-10-26 | neelafarz | Kitchen polish: bigger Dracula, smaller hint/toast boxes, plain riddle text, ingredients raised onto the shelves
+b9ee1c0 | 2026-10-26 | neelafarz | Add kitchen story 'Dinner for the Count' as story 2; cave becomes story 3
+a359b20 | 2026-10-26 | neelafarz | Add cave story (bats, gravestone hints, rain, Dracula stab), scene arrows, neumorphic start screen; stage kitchen art
+8d38396 | 2026-10-26 | neelafarz | Add git-log.txt
 543db04 | 2026-10-19 | neelafarz | Checkpoint 1 submission: refresh session transcripts
 341fb96 | 2026-10-19 | neelafarz | Add playtest session details (date, 1 peer, phone, initially confused)
 8592258 | 2026-10-19 | neelafarz | Record peer playtest feedback (hints, theme change) in plan, research, spec
