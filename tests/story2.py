@@ -11,12 +11,12 @@ url = f'http://127.0.0.1:{srv.server_port}/index.html'
 results, errors, loaded = [], [], []
 def check(name, ok): results.append(ok); print(('PASS ' if ok else 'FAIL ') + name)
 
-def start(b, reduced=False):
+def start(b, reduced=False, hash=''):
     pg = b.new_page(viewport={'width': 390, 'height': 844})
     pg.on('console', lambda m: errors.append(m.text) if m.type == 'error' else None)
     pg.on('pageerror', lambda e: errors.append(str(e)))
     pg.on('response', lambda r: loaded.append((r.url.split('/')[-1], r.status)) if 'dracula_stab' in r.url else None)
-    pg.goto(url)
+    pg.goto(url + hash)
     if reduced: pg.check('#reduceMotion')
     else: pg.uncheck('#reduceMotion')
     pg.click('#enter'); pg.wait_for_timeout(300); return pg
@@ -29,14 +29,14 @@ def to_story2(pg):  # play story 1 through the UI, then take the next arrow
 
 with sync_playwright() as p:
     b = p.chromium.launch(args=['--autoplay-policy=no-user-gesture-required'])
-    pg = start(b); to_story2(pg)
+    pg = start(b, hash='#cave')
     tap = lambda s: pg.dispatch_event(s, 'click')
     pips = lambda: pg.eval_on_selector_all('#stage2 .pips i.on', 'e=>e.length')
     on = lambda: pg.eval_on_selector_all('.bat2.on', 'e=>e.length')
     cls = lambda sel: pg.evaluate(f"document.querySelector('{sel}').className")
     drops = pg.evaluate("[...document.querySelectorAll('#rain i')].length")
     check(f'rain drops animate ({drops})', drops >= 30 and pg.evaluate("getComputedStyle(document.querySelector('#rain i')).animationName") == 'rainFall')
-    check('next arrow opens story 2', pg.is_visible('#stage2') and not pg.is_visible('#stage'))
+    check('cave opens directly via #cave', pg.is_visible('#stage2') and not pg.is_visible('#stage'))
     pg.screenshot(path=shots + '/s2_start.png')
     sizes = pg.evaluate("[...document.querySelectorAll('.bat2')].map(e=>{const r=e.getBoundingClientRect();return Math.round(Math.min(r.width,r.height))})")
     check(f'bat tap targets >= 48px {sizes}', all(s >= 48 for s in sizes))
@@ -71,7 +71,7 @@ with sync_playwright() as p:
     pg.close()
 
     # hints: toasts at 5 s / 20 s; numbers cycle in full motion
-    pg = start(b); to_story2(pg)
+    pg = start(b, hash='#cave')
     pg.wait_for_timeout(5600)
     check('5 s idle hint shown', 'restless' in pg.inner_text('#stage2 .hint') and 'show' in pg.evaluate("document.querySelector('#stage2 .hint').className"))
     gop = lambda g: float(pg.evaluate(f"getComputedStyle(document.querySelector('#{g} .gnum')).opacity"))
@@ -86,7 +86,7 @@ with sync_playwright() as p:
     pg.close()
 
     # reduced motion: same gravestone reveal, no animation
-    pg = start(b, reduced=True); to_story2(pg)
+    pg = start(b, reduced=True, hash='#cave')
     gop = lambda: float(pg.evaluate("getComputedStyle(document.querySelector('#gr0 .gnum')).opacity"))
     check('reduced motion hides the rain drops', pg.evaluate("getComputedStyle(document.getElementById('rain')).display") == 'none')
     early = gop(); pg.dispatch_event('#gr0', 'click'); pg.wait_for_timeout(300); shown = gop()
@@ -95,11 +95,11 @@ with sync_playwright() as p:
     pg.close()
 
     # back arrow returns to the castle
-    pg = start(b); to_story2(pg)
+    pg = start(b, hash='#cave')
     for s in ('#b0', '#b2', '#b4'): pg.dispatch_event(s, 'click')
     pg.wait_for_timeout(9000); pg.click('#back2'); pg.wait_for_timeout(200)
-    check('back arrow returns to castle', pg.is_visible('#stage') and not pg.is_visible('#stage2'))
-    pg.dispatch_event('#g2', 'click'); check('story 1 playable after returning', pg.eval_on_selector_all('.seye.on', 'e=>e.length') == 1)
+    check('cave back arrow returns to the kitchen', pg.is_visible('#stageK') and not pg.is_visible('#stage2'))
+    pg.dispatch_event('#ing-moon', 'click'); pg.wait_for_timeout(900); check('kitchen playable after returning', pg.eval_on_selector_all('#stageK .pips i.on', 'e=>e.length') == 1)
     pg.close(); b.close()
 check(f'Dracula stab sound file loads {loaded[:1]}', bool(loaded) and loaded[0][1] == 200)
 check('zero console errors', not errors)

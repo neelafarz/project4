@@ -164,3 +164,9 @@ When directed, save the complete conversation as `transcripts/plan-YYYY-MM-DD_HH
 - **Observed (Developer):** wanted subtle rain drops and rain sound in story 2; confirmed it is good.
 - **Changes:** 36 faint rain streaks over the scene and a very quiet synthesized rain bed (~5% volume, fades with the scene); Pause freezes both; Reduce motion hides the drops and keeps the quiet sound. Story 1 stays rain-free (removed earlier as too loud).
 - **Verified (headless 390×844):** `tests/story1_baseline.py` 15/15, `tests/story2.py` 34/34 (includes rain drops animating, reduced motion hiding them, and the Dracula stab file loading), zero console errors. **Not verified:** how the rain sounds on a phone speaker.
+
+## Phase 3: story order and the kitchen story (2026-10-26)
+- [x] Pushed everything so far to GitHub (commit a359b20 on `main`; Pages URL above).
+- [x] Kitchen assets sliced and added (`ing_*.png`, `kitchen_bg.png`, `kitchen_cauldron.png`).
+- [x] Kitchen scene, logic, sounds and hints built; castle → kitchen → cave navigation; `#kitchen` / `#cave` shortcuts. Cave tests now open the cave directly.
+- [x] Verified (headless 390×844, screenshots reviewed): `tests/story_kitchen.py` 23/23, `tests/story1_baseline.py` 15/15, `tests/story2.py` (cave) 34/34, zero console errors. Not verified: sounds by ear, physical phone, shelf alignment on other phone sizes. Then pushed; Developer review on a phone; final docs, transcripts, deploy check.

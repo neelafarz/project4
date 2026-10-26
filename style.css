@@ -239,3 +239,53 @@ button { font: inherit; color: inherit; }
 @keyframes rainFall { 0% { opacity: 0; transform: translate(0, calc(var(--u) * -6)) rotate(8deg); } 10% { opacity: var(--ro); }
   90% { opacity: var(--ro); } 100% { opacity: 0; transform: translate(calc(var(--u) * -9), calc(var(--u) * 222)) rotate(8deg); } }
 [data-motion="reduced"] .rain { display: none; }   /* reduced motion: no falling drops (the soft rain sound stays) */
+
+/* ---------- story 2 (new order): Dracula's kitchen ---------- */
+/* ingredients stand on the shelves: bottom-centre of the 13u x 14.5u box is the point (--x%, --y%) */
+.ing { transform: translate(-50%, -100%); width: calc(var(--u) * 13); height: calc(var(--u) * 14.5); left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); }
+.ing img { width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; pointer-events: none; user-select: none; -webkit-user-drag: none;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .55)); }
+.ing.used { visibility: hidden; }
+.ing.back { animation: ingBack .7s ease-out; }
+@keyframes ingBack { from { opacity: 0; } to { opacity: 1; } }
+
+/* cauldron on the dais; the soup surface is about 27% down its height */
+.cauldron { left: 31%; top: 61.7%; width: 38%; height: auto; pointer-events: none; }
+.pot-mouth { left: 50%; top: 64.8%; width: 1px; height: 1px; pointer-events: none; }
+.soup-glow { left: 50%; top: 64.8%; width: calc(var(--u) * 26); height: calc(var(--u) * 6); transform: translate(-50%, -50%); border-radius: 50%; mix-blend-mode: screen; opacity: .2; transition: opacity 1s; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 60, 40, .95), rgba(255, 60, 40, 0)); }
+.cook .soup-glow { opacity: .95; }
+.bubbles i { position: absolute; left: calc(var(--bx) * 1%); top: 64.3%; width: calc(var(--u) * 2.2); height: calc(var(--u) * 2.2); border-radius: 50%; opacity: 0;
+  border: 2px solid rgba(255, 170, 160, .7); background: rgba(255, 90, 80, .25); animation: bubble var(--bd) ease-out var(--bl) infinite; }
+.cook .bubbles i { animation-duration: .9s; }
+@keyframes bubble { 0% { opacity: 0; transform: translateY(0) scale(.2); } 30% { opacity: .85; transform: translateY(calc(var(--u) * -.4)) scale(1); } 100% { opacity: 0; transform: translateY(calc(var(--u) * -2)) scale(1.35); } }
+.steam i { position: absolute; left: calc(var(--sx) * 1%); top: 63%; width: calc(var(--u) * 9); height: calc(var(--u) * 16); margin-left: calc(var(--u) * -4.5); border-radius: 50%; opacity: 0; filter: blur(4px);
+  background: radial-gradient(ellipse, rgba(255, 80, 70, .6), rgba(255, 80, 70, 0) 70%); }
+.cook .steam i { animation: steamRise var(--sd) ease-out var(--sl) infinite; }
+@keyframes steamRise { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 20% { opacity: .75; } 100% { opacity: 0; transform: translate(calc(var(--u) * 3), calc(var(--u) * -34)) scale(1.6); } }
+
+/* Dracula appears behind the pot: just his head and shoulders show above the rim */
+.kdrac { left: 50%; top: 51%; height: calc(var(--u) * 38); width: auto; transform: translateX(-50%); opacity: 0; transition: opacity 1.4s ease-in; pointer-events: none; }
+.kdrac.show { opacity: 1; }
+.kdrac.gone { transition-duration: .25s; }
+
+/* smoke puffs (wrong ingredient, garlic, Dracula leaving) */
+.puff { position: absolute; width: calc(var(--u) * var(--ps, 14)); aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%) scale(.3); pointer-events: none;
+  background: radial-gradient(circle, var(--pc, rgba(225, 215, 240, .85)), transparent 70%); animation: puff .9s ease-out forwards; }
+@keyframes puff { 0% { opacity: .95; transform: translate(-50%, -50%) scale(.3); } 100% { opacity: 0; transform: translate(-50%, -62%) scale(1.7); } }
+
+/* recipe riddle on a parchment; runes light up as the right ingredients go in */
+.parch { left: 7%; top: 78.5%; width: 86%; padding: 10px 14px 12px; border-radius: 10px; text-align: center; color: #3a2410; pointer-events: none;
+  background: linear-gradient(#ead9ab, #d3bb82); box-shadow: 0 6px 18px rgba(0, 0, 0, .55), inset 0 0 22px rgba(120, 80, 30, .35); }
+.parch p { margin: 0 0 8px; font: italic 1rem / 1.35 Georgia, "Times New Roman", serif; }
+.runes { display: flex; justify-content: center; gap: 16px; }
+.runes i { font-style: normal; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem;
+  color: rgba(58, 36, 16, .4); border: 2px solid rgba(58, 36, 16, .4); transition: background .4s, color .4s, box-shadow .4s, border-color .4s; }
+.runes i.on { color: #fff; background: #b31d1d; border-color: #ff7a6a; box-shadow: 0 0 10px rgba(255, 60, 40, .85); }
+
+[data-motion="reduced"] .bubbles, [data-motion="reduced"] .ing.back { animation: none; }
+[data-motion="reduced"] .bubbles i { animation: none; opacity: .5; }
+[data-motion="reduced"] .cook .steam i { animation: none; opacity: .4; transform: translateY(calc(var(--u) * -10)); }
+[data-motion="reduced"] .puff { animation: puffFade .9s forwards; }
+@keyframes puffFade { 0% { opacity: .9; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
+[data-motion="reduced"] .kdrac { transition-duration: .6s; }

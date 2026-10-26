@@ -3,9 +3,11 @@
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);
-  // Two scenes share one clock, audio engine, Pause and HUD style. `stage`, `hintEl` and `toastEl` always point at the visible scene.
-  const stage1 = $('stage'), stage2 = $('stage2');
-  let stage = stage1, hintEl = $('hint'), toastEl = $('toast'), scene = 1;
+  // Three scenes (castle → kitchen → cave) share one clock, audio engine, Pause and HUD style.
+  // `stage`, `hintEl` and `toastEl` always point at the visible scene; `scene` is its key.
+  const stage1 = $('stage'), stageK = $('stageK'), stage2 = $('stage2');
+  const STAGES = { castle: stage1, kitchen: stageK, cave: stage2 };
+  let stage = stage1, hintEl = $('hint'), toastEl = $('toast'), scene = 'castle';
   const gargs = [0, 1, 2, 3, 4, 5].map((i) => $('g' + i)), seyes = [0, 1, 2, 3, 4, 5].map((i) => $('se' + i)); // statue eyes (glow red when activated)
   const eyeEls = [0, 1, 2, 3, 4].map((i) => $('e' + i)); // e0 = largest pair (the correct one); e1–e4 are decoys
   const reduced = () => document.documentElement.dataset.motion === 'reduced';
@@ -133,6 +135,18 @@
       audio.tone(73.4, 2.8, 'sawtooth', 0.09); [146.8, 174.6, 220].forEach((f) => audio.tone(f, 2.6, 'triangle', 0.08, 0.05));
       audio.noise(1.6, 0.12, 250, 2600); audio.tone(1500, 1.4, 'sine', 0.04, 0.2, 950); audio.tone(60, 0.7, 'sine', 0.3, 0.1, 38);
     },
+    // story 2 (kitchen): a distinct sound per right ingredient, a puff for wrong ones, bubbling, steam, and Dracula's low bell
+    ing(id) {
+      if (id === 'moon') [1320, 1760, 2217, 2637].forEach((f, i) => audio.tone(f, 0.5, 'sine', 0.07, i * 0.07));                       // sparkle
+      else if (id === 'pumpkin') { audio.tone(180, 0.25, 'sine', 0.25, 0, 90); audio.tone(140, 0.2, 'sine', 0.2, 0.15, 70); audio.noise(0.3, 0.08, 600, 200, 0.05, 'lowpass'); }   // glug
+      else { audio.noise(0.4, 0.1, 2500, 900); [900, 1100, 1400].forEach((f, i) => audio.tone(f, 0.08, 'sine', 0.06, i * 0.1, f * 1.3)); }   // flutter
+    },
+    blorp() { audio.tone(220, 0.25, 'sine', 0.15, 0, 110); },
+    puff() { audio.noise(0.5, 0.18, 1800, 300, 0, 'lowpass'); audio.tone(140, 0.3, 'sine', 0.12, 0, 70); },
+    nope() { sfx.puff(); audio.tone(300, 0.7, 'sawtooth', 0.1, 0.05, 110); },
+    bubbles() { for (let i = 0; i < 36; i++) { const f = 300 + Math.random() * 500; audio.tone(f, 0.08, 'sine', 0.05, i * 0.13 + Math.random() * 0.08, f * 1.8); } },
+    steam() { audio.noise(2.4, 0.07, 500, 2200, 0, 'bandpass'); },
+    chime() { [[110, 0.22], [303.6, 0.12], [594, 0.07], [982, 0.04]].forEach(([f, v]) => audio.tone(f, 3.6, 'sine', v)); audio.tone(55, 3.5, 'sine', 0.15); },
     bats() { audio.noise(1.6, 0.16, 900, 3200); audio.noise(1.2, 0.1, 2500, 800, 0.4, 'highpass'); },
     laugh() { [200, 170, 200, 160, 190].forEach((f, i) => audio.tone(f, 0.16, 'square', 0.08, i * 0.2, f * 0.8)); },
     end() { audio.tone(196, 1.2, 'sine', 0.2); audio.tone(147, 1.4, 'sine', 0.2, 0.25); },
@@ -155,7 +169,7 @@
   /* ambient lightning: random 9–20 s gaps on the shared clock; the thunder arrives 0.7–2.2 s later, far away */
   function scheduleLightning(first = false) {
     clock.after(first ? 11000 : 9000 + Math.random() * 11000, () => {
-      if (scene === 1 && story.mode === 'idle') {
+      if (scene === 'castle' && story.mode === 'idle') {
         const l = $('lightning'), bolt = $('bolt');
         bolt.style.left = `${6 + Math.random() * 16}%`;
         l.classList.remove('on'); void l.offsetWidth; l.classList.add('on'); clock.after(900, () => l.classList.remove('on'));
@@ -174,6 +188,11 @@
     eyes: [
       [6000, 'Something is watching from the trees…'],
       [20000, 'Many eyes glow in the dark. Trust the one that glares the biggest.'],
+    ],
+    kitchen: [
+      [5000, 'The Count is hungry. Read the riddle, then choose carefully from the shelves.'],
+      [20000, 'Something bottled from the moon… and a gourd from the harvest.'],
+      [40000, 'And something that flutters in the dark: shaped like wings.'],
     ],
     bats: [
       [5000, 'The bats hang restless above the cave…'],
@@ -323,26 +342,106 @@
   // 36 thin rain streaks with random position, speed, delay and faintness
   $('rain').innerHTML = Array.from({ length: 36 }, () =>
     `<i style="--rx:${(Math.random() * 115).toFixed(1)};--rd:${(0.9 + Math.random() * 0.7).toFixed(2)}s;--rl:${(-Math.random() * 2).toFixed(2)}s;--ro:${(0.3 + Math.random() * 0.35).toFixed(2)}"></i>`).join('');
-  const currentStory = () => (scene === 1 ? story : story2);
+  /* ---------- Story 2: "Dinner for the Count" — drop the three right ingredients into the cauldron (any order) → soup bubbles → Dracula appears ---------- */
+  const KING = ['moon', 'pumpkin', 'pasta', 'garlic', 'mushrooms', 'swirl', 'candycorn', 'berries', 'crystals', 'herb'];
+  const GOOD = new Set(['moon', 'pumpkin', 'pasta']);   // moon essence, pumpkin, bat-shaped pasta
+  const ingEls = Object.fromEntries(KING.map((k) => [k, $('ing-' + k)]));
+  // one spot per shelf (left shelves top→bottom, then right): bottom-centre of an ingredient as % of the stage
+  const SLOTS = [[14.7, 25], [17, 33.7], [17.6, 42.3], [18.2, 50.7], [18.2, 58.7], [85.2, 24.7], [83.7, 33.9], [82.8, 42.3], [82.3, 50.7], [81.9, 58.6]];
+  const WRONG_LINES = ['The pot coughs it right back out.', 'Not even a ghost would eat that.', 'Too lumpy. Try again.'];
+  const kitchen = {
+    mode: 'idle',        // idle | story (payoff playing) | done (arrows shown)
+    phase: 'kitchen', progress: 0, busy: false, anims: new Set(),
+    layout() { // the ten ingredients are dealt to the ten shelves at random, so the right three land on random shelves
+      const slots = [...SLOTS];
+      for (let i = slots.length - 1; i > 0; i--) { const k = Math.floor(Math.random() * (i + 1)); [slots[i], slots[k]] = [slots[k], slots[i]]; }
+      KING.forEach((k, i) => { ingEls[k].style.setProperty('--x', slots[i][0]); ingEls[k].style.setProperty('--y', slots[i][1]); });
+    },
+    fly(el, ms, back) { // the item arcs to the cauldron mouth (and, for a wrong one, back again); reduced motion just fades
+      const m = $('potMouth').getBoundingClientRect(), r = el.getBoundingClientRect();
+      const dx = m.left - (r.left + r.width / 2), dy = m.top - (r.top + r.height / 2);
+      const at = (f, s, lift = 0) => `translate(-50%, -100%) translate(${dx * f}px, ${dy * f - lift}px) scale(${s})`;
+      const base = 'translate(-50%, -100%)';
+      const frames = reduced() ? [{ opacity: 1 }, { opacity: back ? 1 : 0 }]
+        : back ? [{ transform: base }, { transform: at(1, .35), offset: .4 }, { transform: at(1, .35), offset: .55 }, { transform: base }]
+               : [{ transform: base }, { transform: at(.5, .8, 30), offset: .5 }, { transform: at(1, .3), opacity: .9 }];
+      const a = el.animate(frames, { duration: ms, easing: 'ease-in-out' }); kitchen.anims.add(a); a.onfinish = () => kitchen.anims.delete(a);
+    },
+    puffAt(x, y, size, color) { // a smoke puff at (x%, y%) of the stage
+      const d = document.createElement('div'); d.className = 'puff'; d.style.cssText = `left:${x}%;top:${y}%;--ps:${size};${color ? `--pc:${color}` : ''}`;
+      stage.appendChild(d); clock.after(900, () => d.remove());
+    },
+    setRunes(n) { [...$('runes').children].forEach((r, i) => r.classList.toggle('on', i < n)); },
+    tap(id) {
+      if (kitchen.mode !== 'idle' || kitchen.busy || !clock.running) return;
+      const el = ingEls[id]; if (el.classList.contains('used')) return;
+      hints.reset(); kitchen.busy = true;
+      if (GOOD.has(id)) {   // drops into the cauldron with its own sound and lights a rune
+        sfx.ing(id); kitchen.fly(el, 650, false);
+        clock.after(650, () => {
+          el.classList.add('used'); kitchen.progress++; setPips(kitchen.progress); kitchen.setRunes(kitchen.progress); sfx.blorp();
+          kitchen.busy = false;
+          if (kitchen.progress === 3) { kitchen.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show'); clock.after(500, kitchen.play); }
+        });
+        return;
+      }
+      kitchen.fly(el, 950, true);   // wrong: the pot puffs and spits it back; progress is kept (garlic wipes it)
+      clock.after(450, () => {
+        if (id === 'garlic') { kitchen.puffAt(50, 64, 22, 'rgba(170, 230, 150, .85)'); sfx.nope(); toast('A voice roars: “GARLIC?! In MY soup?!” The pot spits everything out.', 3400); }
+        else { kitchen.puffAt(50, 64, 14); sfx.puff(); toast(WRONG_LINES[Math.floor(Math.random() * WRONG_LINES.length)], 2000); }
+      });
+      clock.after(950, () => { if (id === 'garlic') kitchen.resetAll(true); kitchen.busy = false; });
+    },
+    resetAll(fadeBack = false) { // used ingredients return to their shelves and the recipe clears
+      kitchen.progress = 0; setPips(0); kitchen.setRunes(0);
+      KING.forEach((k) => { const el = ingEls[k], used = el.classList.contains('used'); el.classList.remove('used');
+        if (fadeBack && used) { el.classList.add('back'); clock.after(800, () => el.classList.remove('back')); } });
+    },
+    reset(fresh = false) { kitchen.resetAll(fresh); kitchen.busy = false; kitchen.layout(); },
+    play() { // ~8.5 s: soup bubbles + red glow → steam → Dracula fades in behind the pot with a low bell → funny lines → he leaves in a puff
+      const at = (ms, fn) => clock.after(ms, fn);
+      document.activeElement && document.activeElement.blur();
+      stage.classList.add('cook'); sfx.bubbles();
+      at(600, () => sfx.steam());
+      at(2000, () => { $('kdrac').classList.add('show'); sfx.chime(); toast('A voice rumbles: “Who dares summon me… for DINNER?”', 2400); });
+      at(4300, () => toast('“Hmm… acceptable. Tell the bats I approve.”', 2200));
+      at(5600, () => { const d = $('kdrac'); d.classList.add('gone'); d.classList.remove('show'); kitchen.puffAt(50, 56, 24, 'rgba(150, 110, 190, .85)'); sfx.puff(); });
+      at(6400, () => { stage.classList.remove('cook'); $('kdrac').classList.remove('gone'); sfx.end(); });
+      at(7400, () => {
+        kitchen.reset(true); kitchen.mode = 'done'; stage.classList.remove('story'); hints.reset();
+        $('navK').hidden = false; $('replayK').focus({ preventScroll: true });
+        toast('The kitchen falls quiet… Replay it, or move on.', 3500);
+      });
+    },
+  };
+  kitchen.layout();
+  const STORIES = { castle: story, kitchen, cave: story2 };
+  const NAV = { castle: ['nav1', 'pause'], kitchen: ['navK', 'pauseK'], cave: ['nav2', 'pause2'] };
+  const currentStory = () => STORIES[scene];
 
   /* ---------- scene switching (next / back / replay arrows) ---------- */
-  function showScene(n) {
-    scene = n; stage = n === 1 ? stage1 : stage2;
-    stage1.hidden = n !== 1; stage2.hidden = n !== 2;
+  function showScene(key) {
+    scene = key; stage = STAGES[key];
+    Object.entries(STAGES).forEach(([k, el]) => { el.hidden = k !== key; });
     hintEl = stage.querySelector('.hint'); toastEl = stage.querySelector('.toast');
-    n === 2 ? audio.startRain() : audio.stopRain();
+    key === 'cave' ? audio.startRain() : audio.stopRain();
     hints.reset();
   }
-  function replay(n) {
-    const st = n === 1 ? story : story2;
-    st.reset(true); st.mode = 'idle'; $('nav' + n).hidden = true; hints.reset();
-    $(n === 1 ? 'pause' : 'pause2').focus({ preventScroll: true });
+  function go(key) { // leave the current story (reset, arrows hidden) and open another, ready to play
+    const from = currentStory(); $(NAV[scene][0]).hidden = true; from.reset(); from.mode = 'idle';
+    showScene(key); const to = STORIES[key]; to.reset && to.reset(); to.mode = 'idle';
+    $(NAV[key][1]).focus({ preventScroll: true });
+  }
+  function replay() {
+    const st = currentStory(); st.reset(true); st.mode = 'idle'; $(NAV[scene][0]).hidden = true; hints.reset();
+    $(NAV[scene][1]).focus({ preventScroll: true });
   }
 
   /* ---------- global Play/Pause: audio, CSS animation, shared timers and interaction together ---------- */
   function setPaused(paused) {
     clock.running = !paused; clock.last = performance.now();
-    stage1.classList.toggle('paused', paused); stage2.classList.toggle('paused', paused);
+    Object.values(STAGES).forEach((el) => el.classList.toggle('paused', paused));
+    kitchen.anims.forEach((a) => (paused ? a.pause() : a.play()));
     document.body.classList.toggle('paused', paused);
     document.querySelectorAll('.pause').forEach((btn) => { btn.setAttribute('aria-pressed', String(paused)); btn.setAttribute('aria-label', paused ? 'Play' : 'Pause'); });
     paused ? audio.suspend() : audio.resume();
@@ -358,15 +457,19 @@
     hints.reset(); scheduleOwl(true); scheduleLightning(true);
     $('pause').focus({ preventScroll: true });
     requestAnimationFrame((n) => { clock.last = n; clock.tick(n); });
+    const jump = location.hash.slice(1);   // developer shortcut: index.html#kitchen or #cave opens that story directly
+    if (STAGES[jump] && jump !== 'castle') go(jump);
   });
   gargs.forEach((g, i) => g.addEventListener('click', () => story.tapStatue(i)));
   eyeEls.forEach((e, k) => e.addEventListener('click', () => story.tapEyes(k)));
   bats2.forEach((b, i) => b.addEventListener('click', () => story2.tap(i)));
   document.querySelectorAll('.grave').forEach((g) => g.addEventListener('click', () => story2.reveal(g)));
-  $('replay1').addEventListener('click', () => replay(1));
-  $('next1').addEventListener('click', () => { $('nav1').hidden = true; story.mode = 'idle'; story.reset(); showScene(2); story2.mode = 'idle'; });
-  $('replay2').addEventListener('click', () => replay(2));
-  $('back2').addEventListener('click', () => { $('nav2').hidden = true; story2.mode = 'idle'; showScene(1); story.mode = 'idle'; });
+  KING.forEach((k) => ingEls[k].addEventListener('click', () => kitchen.tap(k)));
+  ['replay1', 'replayK', 'replay2'].forEach((id) => $(id).addEventListener('click', replay));
+  $('next1').addEventListener('click', () => go('kitchen'));
+  $('backK').addEventListener('click', () => go('castle'));
+  $('nextK').addEventListener('click', () => go('cave'));
+  $('back2').addEventListener('click', () => go('kitchen'));
   document.querySelectorAll('.pause').forEach((b) => b.addEventListener('click', () => setPaused(!isPaused())));
   document.addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'p' && !stage.hidden) setPaused(!isPaused()); });
   document.addEventListener('visibilitychange', () => { if (document.hidden && !stage.hidden && !isPaused()) setPaused(true); });
