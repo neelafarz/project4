@@ -5,20 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a1030">
 <title>Drac's Midnight Manor</title>
-<link rel="stylesheet" href="style.css?v=18">
+<link rel="stylesheet" href="style.css?v=19">
 </head>
 <body>
 
 <!-- Start screen: Enter unlocks audio and applies the motion choice -->
 <section id="start" class="start" aria-labelledby="title">
   <h1 id="title">Drac’s<br>Midnight<br>Manor</h1>
-  <p class="tagline">A castle waits at the end of the road.<br>Tap around the statues and the shadows, and see what wakes.</p>
+  <p class="tagline">A castle, a midnight dinner, and one very sleepy count.</p>
   <label class="motion-opt">
     <input type="checkbox" id="reduceMotion">
     <span>Reduce motion</span>
   </label>
   <button id="enter" class="btn-primary" type="button">Enter</button>
-  <p class="note">Sound on. Best on a phone held upright.</p>
   <details class="credits">
     <summary>Credits</summary>
     <ul>
@@ -51,7 +50,7 @@
   <div class="fx mist mist-a" aria-hidden="true"></div>
   <div class="fx mist mist-b" aria-hidden="true"></div>
   <div class="fx" id="bats" aria-hidden="true"></div>
-  <img class="layer" src="assets/img/castle_forest_clear.png?v=18" alt="" width="852" height="1846" decoding="async">
+  <img class="layer" src="assets/img/castle_forest_clear.png?v=19" alt="" width="852" height="1846" decoding="async">
   <!-- Ambient wildlife between the forest and the gargoyles: bats out of the trees, a crawling spider -->
   <div class="fx" id="treebats" aria-hidden="true">
     <div class="tbat tbat-a"><svg viewBox="0 0 40 22"><path d="M20 20 L16 9 L11 12 L0 2 Q8 12 6 18 Q12 14 16 20 Q18 17 20 20 Q22 17 24 20 Q28 14 34 18 Q32 12 40 2 L29 12 L24 9Z"/></svg></div>
@@ -63,7 +62,7 @@
     <g class="legs legs-b"><path d="M32 19 L42 10 L53 15 M30 29 L40 39 L51 39 M23 16 L18 3 L8 5 M21 28 L13 38 L5 39"/></g>
     <ellipse cx="26" cy="22" rx="13" ry="9" class="sbody"/><circle cx="42" cy="21" r="6" class="sbody"/>
     <circle cx="45" cy="19" r="1.7" class="seye2"/><circle cx="45" cy="23" r="1.7" class="seye2"/></svg></div></div>
-  <img class="layer" src="assets/img/castle_gargoyles_dormant.png?v=18" alt="" width="852" height="1846" decoding="async">
+  <img class="layer" src="assets/img/castle_gargoyles_dormant.png?v=19" alt="" width="852" height="1846" decoding="async">
 
   <!-- Statue eyes: dark until a statue is activated, then they glow red -->
   <i class="seye" id="se0" aria-hidden="true" style="left:19.84%;top:58.94%;--w:1.8"></i>
@@ -107,9 +106,9 @@
 
 <main id="stageK" class="stage" hidden aria-label="Dracula's kitchen: shelves of ingredients and a cauldron">
   <!-- Layer order, back to front: kitchen → Dracula (hidden behind the pot) → cauldron + soup effects → ingredients → riddle → interface -->
-  <img class="layer" src="assets/img/kitchen_bg.png?v=18" alt="" width="851" height="1847" decoding="async">
-  <img class="kdrac" id="kdrac" src="assets/img/castle_dracula.png?v=18" alt="" width="266" height="400" decoding="async" aria-hidden="true">
-  <img class="cauldron" src="assets/img/kitchen_cauldron.png?v=18" alt="" width="1024" height="663" decoding="async">
+  <img class="layer" src="assets/img/kitchen_bg.png?v=19" alt="" width="851" height="1847" decoding="async">
+  <img class="kdrac" id="kdrac" src="assets/img/castle_dracula.png?v=19" alt="" width="266" height="400" decoding="async" aria-hidden="true">
+  <img class="cauldron" src="assets/img/kitchen_cauldron.png?v=19" alt="" width="1024" height="663" decoding="async">
   <div class="soup-glow" aria-hidden="true"></div>
   <div class="fx bubbles" aria-hidden="true"><i style="--bx:41;--bd:2.6s;--bl:-.4s"></i><i style="--bx:47;--bd:3.2s;--bl:-1.6s"></i><i style="--bx:53;--bd:2.9s;--bl:-2.2s"></i><i style="--bx:58;--bd:3.5s;--bl:-.9s"></i><i style="--bx:50;--bd:2.3s;--bl:-1.2s"></i></div>
   <div class="fx steam" aria-hidden="true"><i style="--sx:44;--sd:3.4s;--sl:0s"></i><i style="--sx:50;--sd:4s;--sl:-1.3s"></i><i style="--sx:56;--sd:3.7s;--sl:-2.4s"></i></div>
@@ -124,32 +123,27 @@
     <path class="rwing" d="M16 16 Q30 9 46 16 Q30 23 16 16"/><ellipse class="rshine" cx="28" cy="13" rx="9" ry="2.6"/>
   </svg></div></div>
 
-  <button class="hotspot ing" id="ing-moon" data-ing="moon" type="button" aria-label="Jar of moon essence"><img src="assets/img/ing_moon.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot ing" id="ing-pumpkin" data-ing="pumpkin" type="button" aria-label="Pumpkin"><img src="assets/img/ing_pumpkin.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot ing" id="ing-pasta" data-ing="pasta" type="button" aria-label="Bowl of bat-shaped pasta"><img src="assets/img/ing_pasta.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot ing" id="ing-garlic" data-ing="garlic" type="button" aria-label="Garlic"><img src="assets/img/ing_garlic.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot ing" id="ing-mushrooms" data-ing="mushrooms" type="button" aria-label="Blue mushrooms"><img src="assets/img/ing_mushrooms.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot ing" id="ing-swirl" data-ing="swirl" type="button" aria-label="Bottle of swirling mist"><img src="assets/img/ing_swirl.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot ing" id="ing-candycorn" data-ing="candycorn" type="button" aria-label="Candy corn"><img src="assets/img/ing_candycorn.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot ing" id="ing-berries" data-ing="berries" type="button" aria-label="Red berries"><img src="assets/img/ing_berries.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot ing" id="ing-crystals" data-ing="crystals" type="button" aria-label="Purple crystals"><img src="assets/img/ing_crystals.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot ing" id="ing-herb" data-ing="herb" type="button" aria-label="Sprig of herb"><img src="assets/img/ing_herb.png?v=18" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-moon" data-ing="moon" type="button" aria-label="Jar of moon essence"><img src="assets/img/ing_moon.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-pumpkin" data-ing="pumpkin" type="button" aria-label="Pumpkin"><img src="assets/img/ing_pumpkin.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-pasta" data-ing="pasta" type="button" aria-label="Bowl of bat-shaped pasta"><img src="assets/img/ing_pasta.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-garlic" data-ing="garlic" type="button" aria-label="Garlic"><img src="assets/img/ing_garlic.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-mushrooms" data-ing="mushrooms" type="button" aria-label="Blue mushrooms"><img src="assets/img/ing_mushrooms.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-swirl" data-ing="swirl" type="button" aria-label="Bottle of swirling mist"><img src="assets/img/ing_swirl.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-candycorn" data-ing="candycorn" type="button" aria-label="Candy corn"><img src="assets/img/ing_candycorn.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-berries" data-ing="berries" type="button" aria-label="Red berries"><img src="assets/img/ing_berries.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-crystals" data-ing="crystals" type="button" aria-label="Purple crystals"><img src="assets/img/ing_crystals.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot ing" id="ing-herb" data-ing="herb" type="button" aria-label="Sprig of herb"><img src="assets/img/ing_herb.png?v=19" alt="" draggable="false"></button>
 
-  <!-- Recipe scroll on the floor: tap it to read (or hide) the riddle -->
-  <button class="hotspot scroll" id="scroll" type="button" aria-label="Recipe scroll: read the riddle" aria-pressed="false" style="--x:10;--y:91">
-    <svg viewBox="0 0 60 40" aria-hidden="true">
-      <rect x="6" y="9" width="48" height="22" rx="4" fill="#e8d6a6" stroke="#8a6a35" stroke-width="1.5"/>
-      <rect x="3" y="6" width="9" height="28" rx="4.5" fill="#d2b878" stroke="#8a6a35" stroke-width="1.5"/>
-      <rect x="48" y="6" width="9" height="28" rx="4.5" fill="#d2b878" stroke="#8a6a35" stroke-width="1.5"/>
-      <path d="M16 16 H44 M16 21 H40 M16 26 H44" stroke="#8a6a35" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>
-      <circle cx="30" cy="31" r="4.2" fill="#a51616" stroke="#5c0a0a" stroke-width="1"/>
-    </svg>
+  <!-- Recipe scroll on the floor: tap it to unroll (or roll up) the riddle -->
+  <button class="hotspot scroll" id="scroll" type="button" aria-label="Recipe scroll: read the riddle" aria-pressed="false" style="--x:9;--y:92">
+    <img src="assets/img/scroll_closed.png?v=20" alt="" draggable="false">
   </button>
 
-  <!-- Recipe riddle as a small line of text (no box); progress is the three dots at the top left -->
-  <div class="kcaption" aria-label="Recipe riddle">
-    <p>Something silver from the night sky, something orange, and something with wings.</p>
-  </div>
+  <!-- Opened recipe scroll (tap it to roll it up again); the riddle is printed on the parchment -->
+  <button class="scroll-open" id="scrollOpen" type="button" aria-label="Recipe scroll, tap to close" tabindex="-1">
+    <img src="assets/img/scroll_open.png?v=19" alt="" draggable="false">
+    <span>Something silver from the night sky, something orange, and something with wings.</span>
+  </button>
 
   <!-- After the payoff: back to the castle, or on to the next story (the scene stays playable) -->
   <div class="nav" id="navK" hidden>
@@ -171,20 +165,20 @@
 
 <main id="stage2" class="stage" hidden aria-label="Bats hanging above a cave at the top of a graveyard path">
   <!-- Layer order, back to front: path → mist → cave + red glow → Dracula → branch → bats and hint numbers → graveyard → interface -->
-  <img class="layer" src="assets/img/cave_path.png?v=18" alt="" width="852" height="1846" decoding="async">
+  <img class="layer" src="assets/img/cave_path.png?v=19" alt="" width="852" height="1846" decoding="async">
   <div class="fx mist mist-a" aria-hidden="true"></div>
   <div class="fx mist mist-b" aria-hidden="true"></div>
-  <img class="cave" src="assets/img/cave_mouth.png?v=18" alt="" width="1024" height="683" decoding="async">
+  <img class="cave" src="assets/img/cave_mouth.png?v=19" alt="" width="1024" height="683" decoding="async">
   <div class="cave-glow" aria-hidden="true"></div>
   <div class="zzz-wrap" aria-hidden="true"><i>Z</i><i>Z</i><i>Z</i></div>
-  <img class="drac2" id="drac2" src="assets/img/castle_dracula.png?v=18" alt="" width="266" height="400" decoding="async" aria-hidden="true">
-  <img class="branch" src="assets/img/cave_branch.png?v=18" alt="" width="1448" height="483" decoding="async">
-  <button class="hotspot bat2" id="b0" type="button" aria-label="Hanging bat 1 of 5" style="--i:0;--x:14;--y:49.9;--fx:-40"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=18" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot bat2" id="b1" type="button" aria-label="Hanging bat 2 of 5" style="--i:1;--x:31;--y:51.4;--fx:-20"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=18" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot bat2" id="b2" type="button" aria-label="Hanging bat 3 of 5" style="--i:2;--x:48;--y:52.4;--fx:10"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=18" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot bat2" id="b3" type="button" aria-label="Hanging bat 4 of 5" style="--i:3;--x:65;--y:51.5;--fx:30"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=18" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=18" alt="" draggable="false"></button>
-  <button class="hotspot bat2" id="b4" type="button" aria-label="Hanging bat 5 of 5" style="--i:4;--x:82;--y:52.8;--fx:45"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=18" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=18" alt="" draggable="false"></button>
-  <img class="layer" src="assets/img/cave_graveyard.png?v=18" alt="" width="852" height="1846" decoding="async">
+  <img class="drac2" id="drac2" src="assets/img/castle_dracula.png?v=19" alt="" width="266" height="400" decoding="async" aria-hidden="true">
+  <img class="branch" src="assets/img/cave_branch.png?v=19" alt="" width="1448" height="483" decoding="async">
+  <button class="hotspot bat2" id="b0" type="button" aria-label="Hanging bat 1 of 5" style="--i:0;--x:14;--y:49.9;--fx:-40"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=19" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot bat2" id="b1" type="button" aria-label="Hanging bat 2 of 5" style="--i:1;--x:31;--y:51.4;--fx:-20"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=19" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot bat2" id="b2" type="button" aria-label="Hanging bat 3 of 5" style="--i:2;--x:48;--y:52.4;--fx:10"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=19" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot bat2" id="b3" type="button" aria-label="Hanging bat 4 of 5" style="--i:3;--x:65;--y:51.5;--fx:30"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=19" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=19" alt="" draggable="false"></button>
+  <button class="hotspot bat2" id="b4" type="button" aria-label="Hanging bat 5 of 5" style="--i:4;--x:82;--y:52.8;--fx:45"><img class="dorm" src="assets/img/cave_bat_dormant.png?v=19" alt="" draggable="false"><img class="lit" src="assets/img/cave_bat.png?v=19" alt="" draggable="false"></button>
+  <img class="layer" src="assets/img/cave_graveyard.png?v=19" alt="" width="852" height="1846" decoding="async">
 
   <!-- Gravestones: three carry a faint carved number (1, 3, 5); tapping one lets it show briefly, so the player learns which bats to press -->
   <button class="hotspot grave" id="gr0" type="button" aria-label="Gravestone, front left" style="--x:9.4;--y:81.8;--w:18.8;--h:27"><span class="gnum" aria-hidden="true" style="--nx:50;--ny:36">1</span></button>
@@ -211,6 +205,6 @@
   <div class="flash" aria-hidden="true"></div>
 </main>
 
-<script src="app.js?v=18"></script>
+<script src="app.js?v=19"></script>
 </body>
 </html>

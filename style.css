@@ -3,12 +3,18 @@
    centred in the viewport, so every size below is in u and scales with the phone.
    Hotspots are positioned by --x/--y (percent of the stage) and sized by --w/--h (in u). */
 :root {
+  /* --u is 1% of the stage width. Default: the whole scene fits inside the window (letterboxed). On portrait, phone-shaped windows the scene instead
+     fills the full width and may crop up to ~10% off the top and bottom (--crop is the cropped strip, in px, on each end). */
   --u: min(1vw, 0.4615dvh);
+  --crop: 0px;
   --ink: #f4f6ff;
   --accent: #ff5a4a;      /* castle red */
   --ghost: #5aa8ff;       /* blue progress dots */
   --panel: rgba(8, 10, 32, .85);
   font-size: 16px;
+}
+@media (max-aspect-ratio: 3/4) {
+  :root { --u: min(1vw, 0.577dvh); --crop: max(0px, calc((var(--u) * 216.67 - 100dvh) / 2)); }
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; height: 100%; background: #070a1e; color: var(--ink);
@@ -152,19 +158,21 @@ button { font: inherit; color: inherit; }
 @keyframes ring { from { transform: translate(-50%, -50%) scale(1); opacity: 1; } to { transform: translate(-50%, -50%) scale(5); opacity: 0; } }
 
 /* ---------- interface ---------- */
-.hud { top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: max(env(safe-area-inset-top), 10px) 12px 0; }
+.hud { top: var(--crop); left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: max(env(safe-area-inset-top), 10px) 12px 0; }
 .pips { display: flex; gap: 10px; padding: 12px 14px; border-radius: 24px; background: var(--panel); }
 .pips i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ghost); transition: background .3s, box-shadow .3s; }
 .pips i.on { background: var(--ghost); box-shadow: 0 0 10px var(--ghost); }
-.pause { width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(244, 246, 255, .6); background: var(--panel); cursor: pointer; display: grid; place-items: center; opacity: .85; }
-.pause svg { width: 24px; height: 24px; fill: var(--ink); }
+.pause { width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
+  background: #1c2750; box-shadow: -4px -4px 10px #2a3a72, 4px 4px 10px #0b1128; transition: box-shadow .15s; }   /* same navy neumorphic look as the start screen */
+.pause svg { width: 22px; height: 22px; fill: #ffb0a4; filter: drop-shadow(0 0 5px rgba(255, 90, 70, .5)); }
+.pause:active, .paused .pause { box-shadow: inset 3px 3px 7px #0b1128, inset -3px -3px 7px #2a3a72; }   /* pressed in while paused */
 .pause .ic-play { display: none; }
 .paused .pause .ic-play { display: block; }
 .paused .pause .ic-pause { display: none; }
 .hint, .toast { left: 50%; right: auto; transform: translateX(-50%); width: max-content; max-width: 78%; margin: 0; padding: 6px 12px; border-radius: 12px; background: rgba(8, 10, 32, .72); color: var(--ink);
   font-size: .85rem; line-height: 1.3; text-align: center; opacity: 0; transition: opacity .6s; pointer-events: none; }
-.hint { top: 8%; font-style: italic; }
-.toast { top: 18%; font-weight: 700; color: #ffb4a8; }
+.hint { top: calc(8% + var(--crop)); font-style: italic; }
+.toast { top: calc(18% + var(--crop)); font-weight: 700; color: #ffb4a8; }
 .hint.show, .toast.show { opacity: 1; }
 .paused-badge { top: 45%; left: 50%; transform: translate(-50%, -50%); padding: 10px 26px; border-radius: 30px; background: var(--panel);
   font-size: 1.4rem; letter-spacing: .15em; text-transform: uppercase; opacity: 0; pointer-events: none; }
@@ -218,11 +226,11 @@ button { font: inherit; color: inherit; }
 .grave.rev .gnum { opacity: 1; }
 
 /* next / back / replay arrows after a payoff: 56px round buttons */
-.nav { left: 0; right: 0; top: 91%; display: flex; justify-content: center; gap: 22px; }
-.navbtn { width: 56px; height: 56px; border-radius: 50%; border: 2px solid rgba(244, 246, 255, .7); background: var(--panel); cursor: pointer; display: grid; place-items: center;
-  box-shadow: 0 0 18px rgba(90, 168, 255, .55); }
-.navbtn svg { width: 28px; height: 28px; fill: var(--ink); }
-.navbtn:active { transform: scale(.94); }
+.nav { left: 0; right: 0; top: auto; bottom: calc(var(--crop) + 14px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: center; gap: 22px; }
+.navbtn { width: 56px; height: 56px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
+  background: #1c2750; box-shadow: -5px -5px 12px #2a3a72, 5px 5px 12px #0b1128; transition: box-shadow .15s; }
+.navbtn svg { width: 26px; height: 26px; fill: #ffb0a4; filter: drop-shadow(0 0 5px rgba(255, 90, 70, .5)); }
+.navbtn:active { box-shadow: inset 4px 4px 9px #0b1128, inset -4px -4px 9px #2a3a72; }
 
 /* reduced motion: no swaying, shaking or flying; glows and fades only */
 [data-motion="reduced"] .bat2.fly { animation: batFade .6s forwards; }
@@ -274,11 +282,6 @@ button { font: inherit; color: inherit; }
   background: radial-gradient(circle, var(--pc, rgba(225, 215, 240, .85)), transparent 70%); animation: puff .9s ease-out forwards; }
 @keyframes puff { 0% { opacity: .95; transform: translate(-50%, -50%) scale(.3); } 100% { opacity: 0; transform: translate(-50%, -62%) scale(1.7); } }
 
-/* recipe riddle: small plain text on the floor (no box), in the same font as the rest of the interface */
-.kcaption { left: 6%; right: 6%; top: 82.5%; text-align: center; pointer-events: none; opacity: 0; transition: opacity .6s; }
-.riddle .kcaption { opacity: 1; }   /* the riddle shows only while the recipe scroll is open */
-.solved .kcaption { opacity: 0; }   /* ...and disappears once all three ingredients are in */
-.kcaption p { margin: 0; font: .9rem / 1.4 "Trebuchet MS", system-ui, sans-serif; color: #eef2ff; text-shadow: 0 1px 3px #000, 0 0 8px #000; }
 
 [data-motion="reduced"] .bubbles, [data-motion="reduced"] .ing.back { animation: none; }
 [data-motion="reduced"] .bubbles i { animation: none; opacity: .5; }
@@ -288,7 +291,7 @@ button { font: inherit; color: inherit; }
 [data-motion="reduced"] .kdrac { transition-duration: .6s; }
 
 /* kitchen ambient: a cockroach dashes across the floor (two darts with a pause between), triggered from app.js */
-.roach { position: absolute; left: -12%; top: 93.5%; width: calc(var(--u) * 11); height: calc(var(--u) * 5.5); opacity: 0; }
+.roach { position: absolute; left: -12%; top: calc(100% - var(--crop) - 40px); width: calc(var(--u) * 11); height: calc(var(--u) * 5.5); opacity: 0; }
 .roach svg { width: 100%; height: 100%; overflow: visible; }
 .roach .rbody { fill: #351709; } .roach .rhead { fill: #2a1106; } .roach .rwing { fill: none; stroke: rgba(20, 8, 4, .7); stroke-width: 1.2; }
 .roach .rshine { fill: rgba(255, 170, 100, .28); }
@@ -316,12 +319,21 @@ button { font: inherit; color: inherit; }
 @keyframes zFloat { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 20% { opacity: .95; } 100% { opacity: 0; transform: translate(calc(var(--u) * 4), calc(var(--u) * -14)) scale(1.3); } }
 [data-motion="reduced"] .zzz .zzz-wrap i { animation: none; opacity: .9; }
 [data-motion="reduced"] #kbats { display: none; }
-#stage2 .toast { top: 31%; }   /* in the cave, keep the line off the sleeping Dracula */
+#stage2 .toast { top: calc(31% + var(--crop)); }   /* in the cave, keep the line off the sleeping Dracula */
 
-/* recipe scroll on the floor (gently pulses so it can be discovered) */
-.scroll { width: calc(var(--u) * 13); min-width: 48px; aspect-ratio: 3 / 2; min-height: 48px; }
-.scroll svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 6px rgba(255, 220, 140, .35)); animation: scrollGlow 3.2s ease-in-out infinite alternate; }
-.riddle .scroll svg { animation: none; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 8px rgba(255, 220, 140, .7)); }
-@keyframes scrollGlow { from { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 3px rgba(255, 220, 140, .15)); } to { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 10px rgba(255, 220, 140, .6)); } }
-[data-motion="reduced"] .scroll svg { animation: none; }
+/* recipe scroll: the rolled scroll lies on the floor (gentle glow so it can be found); tapping it unrolls an open scroll, held sideways, with the riddle on it */
+.scroll { width: 48px; height: calc(var(--u) * 26); min-height: 96px; top: calc(100% - var(--crop) - 92px); display: grid; place-items: center; }   /* stands upright in the corner like a tool, not a prop on the floor */
+.scroll img { height: 100%; width: auto; max-width: 100%; display: block; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 4px rgba(255, 220, 140, .2)); animation: scrollGlow 3.2s ease-in-out infinite alternate; }
+.riddle .scroll img { animation: none; opacity: .55; }
+@keyframes scrollGlow { from { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 3px rgba(255, 220, 140, .12)); } to { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 11px rgba(255, 220, 140, .65)); } }
+[data-motion="reduced"] .scroll img { animation: none; }
 .story .scroll { pointer-events: none; }
+.scroll-open { position: absolute; left: 50%; bottom: calc(1% + var(--crop)); width: calc(var(--u) * 86); border: 0; padding: 0; background: none; cursor: pointer; opacity: 0; pointer-events: none;
+  transform: translate(-50%, calc(var(--u) * 6)); transition: opacity .5s, transform .5s; filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .6)); }
+.scroll-open img { width: 100%; height: auto; display: block; pointer-events: none; }
+.scroll-open span { position: absolute; left: 17%; right: 17%; top: 21%; bottom: 21%; display: flex; align-items: center; justify-content: center; text-align: center;
+  font: 700 .95rem / 1.4 "Trebuchet MS", system-ui, sans-serif; color: #3a2410; text-shadow: 0 1px 0 rgba(255, 245, 215, .5); pointer-events: none; }
+.riddle .scroll-open { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+.solved .scroll-open { opacity: 0; pointer-events: none; }   /* it rolls away once all three ingredients are in */
+[data-motion="reduced"] .scroll-open { transform: translate(-50%, 0); transition: opacity .3s; }
+

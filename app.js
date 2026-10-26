@@ -279,7 +279,7 @@
         sfx.whisper(); ringAt(el, '#ff3a2a'); el.classList.add('shut'); clock.after(1500, () => el.classList.remove('shut')); return;
       }
       sfx.growl(); ringAt(el, '#ff3a2a'); setPips(4); flash();
-      clock.after(900, story.play);
+      clock.after(600, story.play);
     },
     resetStatues() { story.progress = 0; setPips(0); seyes.forEach((l) => l.classList.remove('on')); },
     reset() { story.resetStatues(); story.phase = 'statues'; eyeEls.forEach((e) => { e.hidden = true; e.classList.remove('shut'); }); },
@@ -300,8 +300,8 @@
         }
       });
       at(7000, () => { sfx.laugh(); flash(); $('dracula').classList.remove('show'); $('dracShadow').classList.remove('show'); });
-      at(7500, () => { stage.classList.remove('flare'); seyes.forEach((l) => l.classList.remove('on')); sfx.end(); });
-      at(8500, () => {
+      at(7300, () => { stage.classList.remove('flare'); seyes.forEach((l) => l.classList.remove('on')); sfx.end(); });
+      at(8000, () => {
         story.reset(); story.mode = 'idle'; stage.classList.remove('story'); hints.reset();
         $('nav1').hidden = false;   // the castle is playable again straight away; the arrow offers the way on
         toast('“Come inside… if you dare.”', 4500);
@@ -430,8 +430,6 @@
       at(600, () => sfx.steam());
       at(1600, () => { $('kdrac').classList.add('show'); sfx.chime(); toast('A voice rumbles: “Who dares summon me… for DINNER?”', 2000); });
       at(1900, () => sfx.summonLaugh());   // his laugh rolls out just after the bell (5 s, ends as he leaves)
-      at(3600, () => toast('“Hmm… acceptable. Not bad for a mortal.”', 1900));
-      at(5500, () => toast('“Now… I must take a nap. Don’t wait up.”', 2400));
       at(6300, () => {   // he bursts into bats and flies off to nap
         const d = $('kdrac'); d.classList.add('gone'); d.classList.remove('show'); kitchen.puffAt(50, 56, 24, 'rgba(150, 110, 190, .85)'); sfx.puff(); sfx.bats();
         if (!reduced()) {
@@ -496,6 +494,7 @@
   document.querySelectorAll('.grave').forEach((g) => g.addEventListener('click', () => story2.reveal(g)));
   KING.forEach((k) => ingEls[k].addEventListener('click', () => kitchen.tap(k)));
   $('scroll').addEventListener('click', () => kitchen.toggleRiddle());
+  $('scrollOpen').addEventListener('click', () => kitchen.toggleRiddle());
   $('next1').addEventListener('click', () => go('kitchen'));
   $('backK').addEventListener('click', () => go('castle'));
   $('nextK').addEventListener('click', () => go('cave'));

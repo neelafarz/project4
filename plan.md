@@ -187,3 +187,17 @@ When directed, save the complete conversation as `transcripts/plan-YYYY-MM-DD_HH
 - **Rename (Developer):** "Drac's Midnight Manor", all red.
 - **Recipe scroll (Developer):** the kitchen riddle is hidden until the scroll on the floor is tapped, and disappears when the third ingredient lands. **A bug of mine:** two CSS edits silently did not apply, so the riddle was visible all the time and never faded; found from the Developer's report and a screenshot, then fixed. The Developer will supply their own scroll artwork.
 - **Caching:** assets are versioned `?v=18` and the local dev server sends `Cache-Control: no-store`.
+
+### Revision 18 (kitchen dialogue)
+- **Observed (Developer):** two dialogue boxes after Dracula appears; the second stays too briefly and is abrupt (wanted it longer or removed).
+- **Change:** the "acceptable" and "nap" lines are merged into one box that stays up 3.4 s (was two boxes of 1.9 s and 2.4 s replacing each other). Dracula's first line is unchanged. Assumed "second box" meant the acceptance line that was swapped for the nap line after 1.9 s.
+- **Scroll (Developer's artwork):** closed scroll on the floor, open scroll rotated 90° and held sideways with the riddle on it. **Performance note:** the castle looked very slow in concurrent test runs (66 s for a 9 s story) but runs at 61 fps alone, so that was test contention.
+
+### Revision 19 (Developer, start screen and buttons)
+- **Observed (Developer):** the pause button and arrows should match the start-screen style; remove the instructions from the home screen and make it a one-line, spoiler-light summary of the games.
+- **Changes:** pause and arrow buttons restyled as navy neumorphic circles with coral icon glow (same as the start screen; pressed-in on tap, pause stays pressed while paused). Home-screen tagline is now one line, "A castle, a midnight dinner, and one very sleepy count." (my wording, for the Developer to adjust); the "Sound on / hold upright" note removed.
+- **Verified:** screenshots of the top bar, arrow row, paused state and the new home screen. **Not verified:** a real phone.
+
+### Revision 20 (kitchen dialogue)
+- **Observed (Developer):** the second dialogue box after Dracula appears is still abrupt; remove it.
+- **Change:** removed it. Dracula now has one line, "Who dares summon me… for DINNER?", then leaves in a bat swarm; the closing line "The kitchen is empty… where did the Count go?" carries the story on. The nap setup line is gone, so the nap is only implied by the cave scene.
