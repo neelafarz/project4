@@ -65,6 +65,8 @@ Reference the brief's fixed requirements rather than copying them. Specify your 
 
 ## Scope and revisions
 
+**Revision log (2026-10-26, later):** app renamed "Drac's Midnight Manor"; narrative flow castle → ("Go inside") → kitchen → ("Where did he go?") → cave, with the cave now finding Dracula asleep; stories stay interactive after their payoff (no Replay button); kitchen riddle is behind a recipe scroll; hints reworded so they nudge. See `plan.md` Revision 17.
+
 **Revision log (2026-10-26, kitchen):** a new story, "Dinner for the Count", was added as story 2 and the cave moved to story 3 (Developer decision); the Dracula cave sound and the neumorphic start screen were added earlier the same day.
 
 **Revision log (2026-10-26):** story 2 (cave, five bats, tap 1-3-5) drafted as a provisional Phase 2 contract with a next-arrow transition from story 1. Nothing built yet. Evidence: `research.md` and `transcripts/spec-2026-10-26_*.md`.

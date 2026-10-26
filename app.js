@@ -1,4 +1,4 @@
-/* Virtual Hallo-weenie — castle version
+/* Drac's Midnight Manor — castle version
    Structure: shared clock (pausable timers) → audio engine → hints → Story 1 and Story 2 state machines → scene switching → controls. */
 (() => {
   'use strict';
@@ -142,12 +142,17 @@
       else if (id === 'pumpkin') { audio.tone(180, 0.25, 'sine', 0.25, 0, 90); audio.tone(140, 0.2, 'sine', 0.2, 0.15, 70); audio.noise(0.3, 0.08, 600, 200, 0.05, 'lowpass'); }   // glug
       else { audio.noise(0.4, 0.1, 2500, 900); [900, 1100, 1400].forEach((f, i) => audio.tone(f, 0.08, 'sine', 0.06, i * 0.1, f * 1.3)); }   // flutter
     },
+    rustle() { audio.noise(0.22, 0.09, 3000, 6500, 0, 'bandpass'); audio.noise(0.2, 0.07, 4000, 7000, 0.12, 'bandpass'); },
     blorp() { audio.tone(220, 0.25, 'sine', 0.15, 0, 110); },
     puff() { audio.noise(0.5, 0.18, 1800, 300, 0, 'lowpass'); audio.tone(140, 0.3, 'sine', 0.12, 0, 70); },
     nope() { sfx.puff(); audio.tone(300, 0.7, 'sawtooth', 0.1, 0.05, 110); },
     bubbles() { for (let i = 0; i < 36; i++) { const f = 300 + Math.random() * 500; audio.tone(f, 0.08, 'sine', 0.05, i * 0.13 + Math.random() * 0.08, f * 1.8); } },
     steam() { audio.noise(2.4, 0.07, 500, 2200, 0, 'bandpass'); },
     chime() { [[110, 0.22], [303.6, 0.12], [594, 0.07], [982, 0.04]].forEach(([f, v]) => audio.tone(f, 3.6, 'sine', v)); audio.tone(55, 3.5, 'sine', 0.15); },
+    // a cockroach skittering: two bursts of tiny, quiet clicks matching its two darts across the floor
+    skitter() { [[0, 22], [1.9, 24]].forEach(([t0, n]) => { for (let i = 0; i < n; i++) audio.noise(0.025, 0.045, 5000, 3000, t0 + i * 0.045 + Math.random() * 0.02, 'highpass'); }); },
+    // Dracula snoring in the cave: two slow breaths (a soft rasp swelling in, then a low rumble out)
+    snore() { [0, 1.7].forEach((t) => { audio.noise(0.8, 0.1, 250, 500, t, 'lowpass'); audio.tone(95, 0.7, 'sawtooth', 0.05, t + 0.55, 60); }); },
     bats() { audio.noise(1.6, 0.16, 900, 3200); audio.noise(1.2, 0.1, 2500, 800, 0.4, 'highpass'); },
     // Dracula's laugh after the kitchen summon: recorded horror laugh (Freesound, CC BY 4.0, see credits), first 5 s; synthesized laugh if it failed to load
     summonLaugh() { audio.laughBuf ? audio.playBuffer(audio.laughBuf, 0.85) : sfx.laugh(); },
@@ -169,6 +174,17 @@
     });
   }
 
+  /* kitchen ambient: a cockroach scurries across the floor every 20–35 s (never during the payoff or in reduced motion) */
+  function scheduleRoach(first = false) {
+    clock.after(first ? 7000 : 20000 + Math.random() * 15000, () => {
+      if (scene === 'kitchen' && kitchen.mode === 'idle' && !reduced()) {
+        const r = $('roach'); r.classList.remove('run'); void r.offsetWidth; r.classList.add('run'); sfx.skitter();
+        clock.after(3500, () => r.classList.remove('run'));
+      }
+      scheduleRoach();
+    });
+  }
+
   /* ambient lightning: random 9–20 s gaps on the shared clock; the thunder arrives 0.7–2.2 s later, far away */
   function scheduleLightning(first = false) {
     clock.after(first ? 11000 : 9000 + Math.random() * 11000, () => {
@@ -186,20 +202,20 @@
     statues: [
       [5000, 'The road is quiet… but the stone guardians seem to be watching you.'],
       [20000, 'They wake in a certain order. Start on the left.'],
-      [40000, 'Left first, then climb to the top right, then come down to the bottom right.'],
+      [40000, 'Begin at the front of the road, climb toward the far side… then come back down.'],
     ],
     eyes: [
       [6000, 'Something is watching from the trees…'],
-      [20000, 'Many eyes glow in the dark. Trust the one that glares the biggest.'],
+      [20000, 'Many eyes glow in the dark, but they are not all equal. Which one is watching hardest?'],
     ],
     kitchen: [
-      [5000, 'The Count is hungry. Read the riddle, then choose carefully from the shelves.'],
+      [5000, 'The Count is hungry… he left his recipe scroll lying on the floor.'],
       [20000, 'Something bottled from the moon… and a gourd from the harvest.'],
       [40000, 'And something that flutters in the dark: shaped like wings.'],
     ],
     bats: [
       [5000, 'The bats hang restless above the cave…'],
-      [20000, 'The old graves carry numbers. Tap them.'],
+      [20000, 'The old graves are not as silent as they look…'],
     ],
   };
   const hints = {
@@ -268,7 +284,7 @@
     resetStatues() { story.progress = 0; setPips(0); seyes.forEach((l) => l.classList.remove('on')); },
     reset() { story.resetStatues(); story.phase = 'statues'; eyeEls.forEach((e) => { e.hidden = true; e.classList.remove('shut'); }); },
     play() { // ~8.5 s: thunder + door flare → Dracula steps out + creak → Toccata + bats → laugh → fade → rest
-      story.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show');
+      story.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show'); $('nav1').hidden = true;
       document.activeElement && document.activeElement.blur();
       const at = (ms, fn) => clock.after(ms, fn), rm = reduced();
       eyeEls.forEach((e) => { e.hidden = true; }); sfx.rise();
@@ -286,9 +302,9 @@
       at(7000, () => { sfx.laugh(); flash(); $('dracula').classList.remove('show'); $('dracShadow').classList.remove('show'); });
       at(7500, () => { stage.classList.remove('flare'); seyes.forEach((l) => l.classList.remove('on')); sfx.end(); });
       at(8500, () => {
-        story.reset(); story.mode = 'done'; stage.classList.remove('story'); hints.reset();
-        $('nav1').hidden = false; $('replay1').focus({ preventScroll: true });
-        toast('The castle falls quiet… Replay it, or follow the road on.', 4000);
+        story.reset(); story.mode = 'idle'; stage.classList.remove('story'); hints.reset();
+        $('nav1').hidden = false;   // the castle is playable again straight away; the arrow offers the way on
+        toast('“Come inside… if you dare.”', 4500);
       });
     },
   };
@@ -309,7 +325,7 @@
       story2.progress++;
       el.classList.add('on');   // a correct bat squeaks and glows; they all fly away together in the payoff
       sfx.squeak(story2.progress); setPips(story2.progress);
-      if (story2.progress === ORDER2.length) { story2.mode = 'story'; stage.classList.add('story2'); hintEl.classList.remove('show'); clock.after(700, story2.play); }
+      if (story2.progress === ORDER2.length) { story2.mode = 'story'; stage.classList.add('story2'); hintEl.classList.remove('show'); $('nav2').hidden = true; clock.after(700, story2.play); }
     },
     wrong(i) { // the tapped bat's eyes turn red, everything resets
       story2.mode = 'wrong'; sfx.screech();
@@ -322,7 +338,7 @@
       g.classList.add('rev'); const id = (g._rev = (g._rev || 0) + 1);
       clock.after(3000, () => { if (id === g._rev) g.classList.remove('rev'); });
     },
-    reset(fadeBack = false) { // bats that flew away return (fading in after a wrong tap or a replay)
+    reset(fadeBack = false) { // bats that flew away return (fading in after a wrong tap or when the story ends)
       story2.progress = 0; setPips(0);
       bats2.forEach((b) => { const flew = b.classList.contains('fly'); b.classList.remove('on', 'wrong', 'fly'); if (fadeBack && flew) { b.classList.add('back'); clock.after(900, () => b.classList.remove('back')); } });
     },
@@ -332,13 +348,14 @@
       document.querySelectorAll('.grave').forEach((g) => g.classList.remove('rev')); sfx.bats(); bats2.forEach((b) => b.classList.add('fly'));
       at(1400, () => { stage.classList.add('lit'); sfx.rise(); });
       at(2600, () => { $('drac2').classList.add('show'); sfx.sting(); });   // he fades in (no drop), with a dramatic sting
-      at(4200, () => { sfx.laugh(); flash(); });
+      at(3000, () => toast('“…zzz… five more minutes…”', 3000));
+      at(4200, () => { stage.classList.add('zzz'); sfx.snore(); });   // he is asleep: soft snoring and floating Zs
       at(6000, () => $('drac2').classList.remove('show'));
-      at(6800, () => { stage.classList.remove('lit'); sfx.end(); });
+      at(6800, () => { stage.classList.remove('lit', 'zzz'); sfx.end(); });
       at(8000, () => {
-        story2.reset(true); story2.mode = 'done'; stage.classList.remove('story2'); hints.reset();
-        $('nav2').hidden = false; $('replay2').focus({ preventScroll: true });
-        toast('The cave falls quiet… Replay it, or go back to the castle.', 4000);
+        story2.reset(true); story2.mode = 'idle'; stage.classList.remove('story2'); hints.reset();
+        $('nav2').hidden = false;
+        toast('Found him! Shh… let the Count sleep.', 4500);
       });
     },
   };
@@ -374,6 +391,11 @@
       const d = document.createElement('div'); d.className = 'puff'; d.style.cssText = `left:${x}%;top:${y}%;--ps:${size};${color ? `--pc:${color}` : ''}`;
       stage.appendChild(d); clock.after(900, () => d.remove());
     },
+    toggleRiddle() { // the recipe scroll opens and closes the riddle (with a paper rustle)
+      if (kitchen.mode !== 'idle' || !clock.running) return;
+      hints.reset(); sfx.rustle();
+      const open = stage.classList.toggle('riddle'); $('scroll').setAttribute('aria-pressed', String(open));
+    },
     tap(id) {
       if (kitchen.mode !== 'idle' || kitchen.busy || !clock.running) return;
       const el = ingEls[id]; if (el.classList.contains('used')) return;
@@ -383,7 +405,8 @@
         clock.after(650, () => {
           el.classList.add('used'); kitchen.progress++; setPips(kitchen.progress); sfx.blorp();
           kitchen.busy = false;
-          if (kitchen.progress === 3) { kitchen.mode = 'story'; stage.classList.add('story'); hintEl.classList.remove('show'); clock.after(500, kitchen.play); }
+          if (kitchen.progress === 3) { kitchen.mode = 'story'; stage.classList.add('story', 'solved');   // the riddle fades away once the recipe is complete
+             hintEl.classList.remove('show'); $('navK').hidden = true; clock.after(500, kitchen.play); }
         });
         return;
       }
@@ -399,7 +422,7 @@
       KING.forEach((k) => { const el = ingEls[k], used = el.classList.contains('used'); el.classList.remove('used');
         if (fadeBack && used) { el.classList.add('back'); clock.after(800, () => el.classList.remove('back')); } });
     },
-    reset(fresh = false) { kitchen.resetAll(fresh); kitchen.busy = false; kitchen.layout(); stageK.classList.remove('kdone'); },
+    reset(fresh = false) { kitchen.resetAll(fresh); kitchen.busy = false; kitchen.layout(); stageK.classList.remove('solved'); },
     play() { // ~8.5 s: soup bubbles + red glow → steam → Dracula fades in behind the pot with a low bell → funny lines → he leaves in a puff
       const at = (ms, fn) => clock.after(ms, fn);
       document.activeElement && document.activeElement.blur();
@@ -407,13 +430,21 @@
       at(600, () => sfx.steam());
       at(1600, () => { $('kdrac').classList.add('show'); sfx.chime(); toast('A voice rumbles: “Who dares summon me… for DINNER?”', 2000); });
       at(1900, () => sfx.summonLaugh());   // his laugh rolls out just after the bell (5 s, ends as he leaves)
-      at(3600, () => toast('“Hmm… acceptable. Not bad for a mortal. Tell the bats I approve.”', 3000));
-      at(6400, () => { const d = $('kdrac'); d.classList.add('gone'); d.classList.remove('show'); kitchen.puffAt(50, 56, 24, 'rgba(150, 110, 190, .85)'); sfx.puff(); });
+      at(3600, () => toast('“Hmm… acceptable. Not bad for a mortal.”', 1900));
+      at(5500, () => toast('“Now… I must take a nap. Don’t wait up.”', 2400));
+      at(6300, () => {   // he bursts into bats and flies off to nap
+        const d = $('kdrac'); d.classList.add('gone'); d.classList.remove('show'); kitchen.puffAt(50, 56, 24, 'rgba(150, 110, 190, .85)'); sfx.puff(); sfx.bats();
+        if (!reduced()) {
+          $('kbats').innerHTML = [[-38, -70], [-22, -88], [-6, -96], [12, -90], [30, -80], [44, -66], [2, -60]].map(([dx, dy], k) =>
+            `<div class="bat" style="left:50%;top:52%;--dx:${dx};--dy:${dy};animation-delay:${k * 0.1}s">${batSVG}</div>`).join('');
+          at(3000, () => { $('kbats').innerHTML = ''; });
+        }
+      });
       at(7100, () => { stage.classList.remove('cook'); $('kdrac').classList.remove('gone'); sfx.end(); });
       at(8000, () => {
-        kitchen.reset(true); kitchen.mode = 'done'; stage.classList.remove('story'); hints.reset();
-        stage.classList.add('kdone'); $('navK').hidden = false; $('replayK').focus({ preventScroll: true });
-        toast('The kitchen falls quiet… Replay it, or move on.', 3500);
+        kitchen.reset(true); kitchen.mode = 'idle'; stage.classList.remove('story', 'solved', 'riddle'); $('scroll').setAttribute('aria-pressed', 'false'); hints.reset();
+        $('navK').hidden = false;
+        toast('The kitchen is empty… where did the Count go?', 4500);
       });
     },
   };
@@ -422,7 +453,7 @@
   const NAV = { castle: ['nav1', 'pause'], kitchen: ['navK', 'pauseK'], cave: ['nav2', 'pause2'] };
   const currentStory = () => STORIES[scene];
 
-  /* ---------- scene switching (next / back / replay arrows) ---------- */
+  /* ---------- scene switching (next / back arrows) ---------- */
   function showScene(key) {
     scene = key; stage = STAGES[key];
     Object.entries(STAGES).forEach(([k, el]) => { el.hidden = k !== key; });
@@ -434,10 +465,6 @@
     const from = currentStory(); $(NAV[scene][0]).hidden = true; from.reset(); from.mode = 'idle';
     showScene(key); const to = STORIES[key]; to.reset && to.reset(); to.mode = 'idle';
     $(NAV[key][1]).focus({ preventScroll: true });
-  }
-  function replay() {
-    const st = currentStory(); st.reset(true); st.mode = 'idle'; $(NAV[scene][0]).hidden = true; hints.reset();
-    $(NAV[scene][1]).focus({ preventScroll: true });
   }
 
   /* ---------- global Play/Pause: audio, CSS animation, shared timers and interaction together ---------- */
@@ -457,7 +484,7 @@
     document.documentElement.dataset.motion = $('reduceMotion').checked ? 'reduced' : 'full';
     $('start').hidden = true; stage.hidden = false;
     await audio.init();
-    hints.reset(); scheduleOwl(true); scheduleLightning(true);
+    hints.reset(); scheduleOwl(true); scheduleLightning(true); scheduleRoach(true);
     $('pause').focus({ preventScroll: true });
     requestAnimationFrame((n) => { clock.last = n; clock.tick(n); });
     const jump = location.hash.slice(1);   // developer shortcut: index.html#kitchen or #cave opens that story directly
@@ -468,7 +495,7 @@
   bats2.forEach((b, i) => b.addEventListener('click', () => story2.tap(i)));
   document.querySelectorAll('.grave').forEach((g) => g.addEventListener('click', () => story2.reveal(g)));
   KING.forEach((k) => ingEls[k].addEventListener('click', () => kitchen.tap(k)));
-  ['replay1', 'replayK', 'replay2'].forEach((id) => $(id).addEventListener('click', replay));
+  $('scroll').addEventListener('click', () => kitchen.toggleRiddle());
   $('next1').addEventListener('click', () => go('kitchen'));
   $('backK').addEventListener('click', () => go('castle'));
   $('nextK').addEventListener('click', () => go('cave'));

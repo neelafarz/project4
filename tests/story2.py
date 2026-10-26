@@ -61,13 +61,13 @@ with sync_playwright() as p:
     pg.wait_for_timeout(1000); pg.screenshot(path=shots + '/s2_takeoff.png')
     pg.wait_for_timeout(1900); check('all bats have flown away', all(bop(i) < .05 for i in range(5))); check('cave glows red', 'lit' in cls('#stage2')); pg.screenshot(path=shots + '/s2_cave.png')
     pg.wait_for_timeout(1300); check('Dracula faded in without moving', 'show' in cls('#drac2') and pg.evaluate("getComputedStyle(document.getElementById('drac2')).transform") == 'matrix(-1, 1.22465e-16, -1.22465e-16, -1, 0, 0)'.replace('matrix', 'matrix') or 'show' in cls('#drac2')); pg.screenshot(path=shots + '/s2_drac.png')
+    pg.wait_for_timeout(900); check('Dracula is asleep: Zs floating, nap line shown', 'zzz' in cls('#stage2'))
     pg.click('#pause2'); pg.wait_for_timeout(2500)
     check('pause freezes the payoff', 'show' in cls('#drac2') and 'paused' in cls('#stage2'))
     pg.click('#pause2'); pg.wait_for_timeout(6000)
-    check('payoff ends, arrows shown', pg.is_visible('#back2') and pg.is_visible('#replay2') and 'story2' not in cls('#stage2'))
-    tap('#b0'); check('taps locked until Replay', on() == 0)
+    check('payoff ends: back arrow shown, scene interactive again', pg.is_visible('#back2') and pg.locator('#replay2').count() == 0 and 'story2' not in cls('#stage2'))
     pg.screenshot(path=shots + '/s2_done.png')
-    pg.click('#replay2'); tap('#b0'); check('replays without reload', on() == 1)
+    tap('#b0'); check('replays without reload (no Replay button needed)', on() == 1)
     pg.close()
 
     # hints: toasts at 5 s / 20 s; numbers cycle in full motion

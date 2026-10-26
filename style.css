@@ -1,4 +1,4 @@
-/* Virtual Hallo-weenie — layout model:
+/* Drac's Midnight Manor — layout model:
    --u is 1% of the stage width. The stage matches the scene art's aspect (852x1846 = 100u x 216.67u),
    centred in the viewport, so every size below is in u and scales with the phone.
    Hotspots are positioned by --x/--y (percent of the stage) and sized by --w/--h (in u). */
@@ -24,7 +24,7 @@ button { font: inherit; color: inherit; }
   gap: 20px; padding: 24px; text-align: center; background: var(--base); overflow-y: auto; }
 .start h1 { margin: 0 0 4px; font-size: clamp(2.2rem, 11vw, 3.4rem); line-height: 1.05; color: #ff8574;
   text-shadow: 3px 3px 7px var(--lo), -3px -3px 7px var(--hi), 0 0 16px rgba(255, 80, 60, .35); letter-spacing: .02em; }
-.start h1 span { color: #a9c6ff; text-shadow: 3px 3px 7px var(--lo), -3px -3px 7px var(--hi), 0 0 16px rgba(110, 160, 255, .45); }
+
 .tagline { margin: 0; font-size: 1.05rem; line-height: 1.5; max-width: 22em; padding: 18px 22px; border-radius: 22px; background: var(--base); box-shadow: var(--inset); color: #e9eeff; }
 .note { margin: 0; font-size: .95rem; color: var(--soft); }
 .motion-opt { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 22px; border-radius: 30px; background: var(--base); box-shadow: var(--raise); font-size: 1.05rem; color: #e9eeff; cursor: pointer; }
@@ -275,8 +275,9 @@ button { font: inherit; color: inherit; }
 @keyframes puff { 0% { opacity: .95; transform: translate(-50%, -50%) scale(.3); } 100% { opacity: 0; transform: translate(-50%, -62%) scale(1.7); } }
 
 /* recipe riddle: small plain text on the floor (no box), in the same font as the rest of the interface */
-.kcaption { left: 6%; right: 6%; top: 82.5%; text-align: center; pointer-events: none; transition: opacity .4s; }
-.kdone .kcaption { opacity: 0; }
+.kcaption { left: 6%; right: 6%; top: 82.5%; text-align: center; pointer-events: none; opacity: 0; transition: opacity .6s; }
+.riddle .kcaption { opacity: 1; }   /* the riddle shows only while the recipe scroll is open */
+.solved .kcaption { opacity: 0; }   /* ...and disappears once all three ingredients are in */
 .kcaption p { margin: 0; font: .9rem / 1.4 "Trebuchet MS", system-ui, sans-serif; color: #eef2ff; text-shadow: 0 1px 3px #000, 0 0 8px #000; }
 
 [data-motion="reduced"] .bubbles, [data-motion="reduced"] .ing.back { animation: none; }
@@ -285,3 +286,42 @@ button { font: inherit; color: inherit; }
 [data-motion="reduced"] .puff { animation: puffFade .9s forwards; }
 @keyframes puffFade { 0% { opacity: .9; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
 [data-motion="reduced"] .kdrac { transition-duration: .6s; }
+
+/* kitchen ambient: a cockroach dashes across the floor (two darts with a pause between), triggered from app.js */
+.roach { position: absolute; left: -12%; top: 93.5%; width: calc(var(--u) * 11); height: calc(var(--u) * 5.5); opacity: 0; }
+.roach svg { width: 100%; height: 100%; overflow: visible; }
+.roach .rbody { fill: #351709; } .roach .rhead { fill: #2a1106; } .roach .rwing { fill: none; stroke: rgba(20, 8, 4, .7); stroke-width: 1.2; }
+.roach .rshine { fill: rgba(255, 170, 100, .28); }
+.roach .rl path, .roach .rant { fill: none; stroke: #2a130a; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.roach.run { animation: roachDash 3.4s linear forwards; }
+.roach.run .rl { animation: roachLegs .12s ease-in-out infinite alternate; }
+.roach.run .rl-b { animation-direction: alternate-reverse; }
+@keyframes roachLegs { from { transform: translateX(-1.5px); } to { transform: translateX(1.5px); } }
+@keyframes roachDash { 0% { opacity: 0; transform: translateX(0); } 3% { opacity: 1; } 36% { transform: translateX(calc(var(--u) * 44)); } 54% { transform: translateX(calc(var(--u) * 44)); }
+  95% { opacity: 1; } 100% { opacity: 0; transform: translateX(calc(var(--u) * 128)); } }
+[data-motion="reduced"] .roach { display: none; }
+
+/* labeled forward buttons ("Go inside", "Where did he go?"), same navy neumorphic look as the start screen */
+.navpill { min-height: 52px; padding: 0 24px; border: 0; border-radius: 30px; font-size: 1.05rem; font-weight: 700; color: #ffb0a4; cursor: pointer;
+  background: #1c2750; box-shadow: -6px -6px 14px #2a3a72, 6px 6px 14px #0b1128; text-shadow: 0 0 10px rgba(255, 90, 70, .5); }
+.navpill:active { box-shadow: inset 4px 4px 9px #0b1128, inset -4px -4px 9px #2a3a72; }
+.nav { align-items: center; }
+
+/* cave: Dracula asleep, floating Zs */
+.zzz-wrap { left: 56.5%; top: 18%; pointer-events: none; }
+.zzz-wrap i { position: absolute; left: 0; top: 0; font: italic 700 calc(var(--u) * 5) / 1 Georgia, serif; color: #f2e6ff; text-shadow: 0 0 8px #000; opacity: 0; }
+.zzz .zzz-wrap i { animation: zFloat 2.6s ease-out infinite; }
+.zzz .zzz-wrap i:nth-child(2) { animation-delay: .8s; margin-left: calc(var(--u) * 3); }
+.zzz .zzz-wrap i:nth-child(3) { animation-delay: 1.6s; margin-left: calc(var(--u) * 6); }
+@keyframes zFloat { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 20% { opacity: .95; } 100% { opacity: 0; transform: translate(calc(var(--u) * 4), calc(var(--u) * -14)) scale(1.3); } }
+[data-motion="reduced"] .zzz .zzz-wrap i { animation: none; opacity: .9; }
+[data-motion="reduced"] #kbats { display: none; }
+#stage2 .toast { top: 31%; }   /* in the cave, keep the line off the sleeping Dracula */
+
+/* recipe scroll on the floor (gently pulses so it can be discovered) */
+.scroll { width: calc(var(--u) * 13); min-width: 48px; aspect-ratio: 3 / 2; min-height: 48px; }
+.scroll svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 6px rgba(255, 220, 140, .35)); animation: scrollGlow 3.2s ease-in-out infinite alternate; }
+.riddle .scroll svg { animation: none; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 8px rgba(255, 220, 140, .7)); }
+@keyframes scrollGlow { from { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 3px rgba(255, 220, 140, .15)); } to { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .7)) drop-shadow(0 0 10px rgba(255, 220, 140, .6)); } }
+[data-motion="reduced"] .scroll svg { animation: none; }
+.story .scroll { pointer-events: none; }
