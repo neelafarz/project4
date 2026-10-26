@@ -1,3 +1,5 @@
+7163d7a | 2026-10-26 | neelafarz | Add Project 4 debrief protocol; save full session transcripts
+fb6608e | 2026-10-26 | neelafarz | Update git-log.txt
 1d0f04c | 2026-10-26 | neelafarz | Fill iPhone windows, scroll art, restyled buttons, one-line home screen, single kitchen line; save transcripts
 d06d459 | 2026-10-26 | neelafarz | Midnight Manor: narrative flow, recipe scroll, roach, cave asleep, interactive after each story, requirements test
 2b69411 | 2026-10-26 | neelafarz | Kitchen: summon laugh (CC BY 4.0, credited), riddle font, runes removed, longer acceptance line, ingredients raised
