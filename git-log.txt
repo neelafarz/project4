@@ -1,0 +1,24 @@
+543db04 | 2026-10-19 | neelafarz | Checkpoint 1 submission: refresh session transcripts
+341fb96 | 2026-10-19 | neelafarz | Add playtest session details (date, 1 peer, phone, initially confused)
+8592258 | 2026-10-19 | neelafarz | Record peer playtest feedback (hints, theme change) in plan, research, spec
+a87c0fe | 2026-10-19 | neelafarz | Revision 8: clear trees from the middle-left road; dark-blue spider
+f8efb82 | 2026-10-19 | neelafarz | Update session transcripts after Game 1 approval; tick deploy in plan
+10c4954 | 2026-10-19 | neelafarz | Revision 7: blue progress dots
+3d52da1 | 2026-10-19 | neelafarz | Revision 6: statues start dormant with red-eye activation; remove rain and leaves; black 8-leg spider
+eded5c9 | 2026-10-19 | neelafarz | Docs: eye-click sound stays as is
+e59c7df | 2026-10-19 | neelafarz | Revision 5: leaves, tree bats, spider, rain, ambient lightning and distant thunder
+8579668 | 2026-10-19 | neelafarz | Revision 4: Toccata clip for Dracula's entrance (CC0), red statue glow
+e726d83 | 2026-10-19 | neelafarz | Revision 3: Dracula steps out of the door, extra eyes, original Transylvanian theme
+1b91b47 | 2026-10-19 | neelafarz | Save session transcripts (research, spec, plan)
+3c93ba4 | 2026-10-19 | neelafarz | Revision 2: ordered statues, silhouette glow, decoy eyes that fade, lower Dracula; docs updated
+4780849 | 2026-10-19 | neelafarz | Add Dracula silhouette to the castle payoff
+ada24f0 | 2026-10-19 | neelafarz | Castle concept: three-layer scene, gargoyle/forest-eyes story, new effects
+b18dcf8 | 2026-10-19 | neelafarz | Use Freesound owl hoot clip (CC BY-NC, credited); synth fallback
+2e33e8a | 2026-10-19 | neelafarz | Add synthesized ambient owl hoot (random gaps, pausable)
+33ddac0 | 2026-10-19 | neelafarz | Cache-bust CSS/JS so stale scripts cannot break Enter
+d403971 | 2026-10-19 | neelafarz | Trigger Pages rebuild
+db5da6e | 2026-10-19 | neelafarz | Trigger Pages rebuild
+6e75cb9 | 2026-10-19 | neelafarz | Clearer instructions and hints; remove bats, add story embers
+2190bb1 | 2026-10-19 | neelafarz | Record scene image provenance (ChatGPT, Developer prompt)
+634d35f | 2026-10-19 | neelafarz | Phase 1 prototype: scene, ambience, start screen, pause, story 1
+704aad9 | 2026-10-19 | neelafarz | Add files via upload
